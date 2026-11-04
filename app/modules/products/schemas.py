@@ -1,73 +1,32 @@
-"""
-Pydantic Schemas for Product Model.
-"""
 from datetime import datetime
-from typing import Optional
-from pydantic import BaseModel, Field, ConfigDict
 from decimal import Decimal
+from typing import Any
+from pydantic import Field
+from app.core.schemas import StrictModel
 
-
-class ProductBase(BaseModel):
-    """Base Product schema with common fields."""
-    category_id: int = Field(..., gt=0)
-    name: str = Field(..., min_length=1, max_length=200)
-    description: Optional[str] = Field(None, max_length=10000)
-    price: Decimal = Field(..., ge=0, decimal_places=2, max_digits=12)
-    image_url: Optional[str] = Field(None, max_length=500)
-
-
-class ProductCreate(ProductBase):
-    """Schema for creating a new product."""
-
-    model_config = ConfigDict(
-        json_schema_extra={
-            "example": {
-                "category_id": 1,
-                "name": "Wireless Headphones",
-                "description": "High-quality wireless headphones with noise cancellation",
-                "price": 99.99,
-                "image_url": "https://example.com/images/headphones.jpg"
-            }
-        }
-    )
-
-
-class ProductUpdate(BaseModel):
-    """Schema for updating product information."""
-    category_id: Optional[int] = Field(None, gt=0)
-    name: Optional[str] = Field(None, min_length=1, max_length=200)
-    description: Optional[str] = Field(None, max_length=10000)
-    price: Optional[Decimal] = Field(None, ge=0, decimal_places=2, max_digits=12)
-    image_url: Optional[str] = Field(None, max_length=500)
-
-    model_config = ConfigDict(
-        json_schema_extra={
-            "example": {
-                "name": "Wireless Headphones Pro",
-                "price": 129.99
-            }
-        }
-    )
-
-
-class ProductResponse(ProductBase):
-    """Schema for product response (excludes inventory quantities)."""
-    id: int
+class CategoryIn(StrictModel):
+    name: str = Field(min_length=1, max_length=150)
+    description: str | None = None
+class CategoryUpdate(StrictModel):
+    name: str | None = Field(None, min_length=1, max_length=150)
+    description: str | None = None
+class CategoryOut(StrictModel):
+    id: int; name: str; description: str | None; created_at: datetime; updated_at: datetime
+class CategoryPage(StrictModel):
+    items: list[CategoryOut]; total: int; page: int; limit: int; pages: int
+class ProductOut(StrictModel):
+    id: int; category_id: int; name: str; description: str | None; price: Decimal; image_url: str | None; is_favorite: bool = False
+class ProductPage(StrictModel):
+    items: list[ProductOut]; total: int; page: int; limit: int; pages: int
+class ProductDetail(ProductOut):
+    category: dict[str, Any] | None = None
+    stock: dict[str, Any]
+class AdminProductDetail(ProductDetail):
+    is_active: bool
     created_at: datetime
     updated_at: datetime
-
-    model_config = ConfigDict(
-        from_attributes=True,
-        json_schema_extra={
-            "example": {
-                "id": 1,
-                "category_id": 1,
-                "name": "Wireless Headphones",
-                "description": "High-quality wireless headphones with noise cancellation",
-                "price": 99.99,
-                "image_url": "https://example.com/images/headphones.jpg",
-                "created_at": "2026-11-01T09:00:00",
-                "updated_at": "2026-11-01T09:00:00"
-            }
-        }
-    )
+class StockIn(StrictModel): quantity: int = Field(ge=0)
+class StockOut(StrictModel): product_id: int; quantity: int
+class FavoriteOut(StrictModel): id: int; user_id: int; product_id: int; created_at: datetime
+class FavoritePage(StrictModel):
+    items: list[ProductOut]; total: int; page: int; limit: int; pages: int
