@@ -1,71 +1,49 @@
-"""
-Pydantic Schemas for User Model.
-"""
 from datetime import datetime
-from enum import Enum
-from typing import Optional
-from pydantic import BaseModel, EmailStr, Field, ConfigDict
+from pydantic import EmailStr, Field, ConfigDict, model_validator
+from app.core.schemas import StrictModel
 
-
-class UserRole(str, Enum):
-    """User role enumeration for Pydantic validation."""
-    ADMIN = "admin"
-    CUSTOMER = "customer"
-
-
-class UserBase(BaseModel):
-    """Base User schema with common fields."""
-    name: str = Field(..., min_length=1, max_length=150)
+class Register(StrictModel):
+    model_config = ConfigDict(extra='ignore')  # untrusted role is discarded
     email: EmailStr
+    password: str = Field(min_length=8)
+    name: str = Field(min_length=1, max_length=150)
 
+class Login(StrictModel):
+    email: EmailStr
+    password: str
 
-class UserCreate(UserBase):
-    """Schema for creating a new user (public - defaults to customer role)."""
-    password: str = Field(..., min_length=8, max_length=255)
+class Profile(StrictModel):
+    name: str | None = Field(None, min_length=1, max_length=150)
+    email: EmailStr | None = None
+    current_password: str | None = None
+    new_password: str | None = Field(None, min_length=8)
 
-    model_config = ConfigDict(
-        json_schema_extra={
-            "example": {
-                "name": "John Doe",
-                "email": "john.doe@example.com",
-                "password": "securepassword123"
-            }
-        }
-    )
+    @model_validator(mode='after')
+    def valid_change(self):
+        if not self.model_fields_set:
+            raise ValueError('At least one editable field is required')
+        if bool(self.current_password) != bool(self.new_password):
+            raise ValueError('Both password fields are required')
+        return self
 
-
-class UserUpdate(BaseModel):
-    """Schema for updating user information (no password or role changes)."""
-    name: Optional[str] = Field(None, min_length=1, max_length=150)
-    email: Optional[EmailStr] = None
-
-    model_config = ConfigDict(
-        json_schema_extra={
-            "example": {
-                "name": "John Smith",
-                "email": "john.smith@example.com"
-            }
-        }
-    )
-
-
-class UserResponse(UserBase):
-    """Schema for user response (excludes password_hash)."""
+class UserOut(StrictModel):
     id: int
-    role: UserRole
+    name: str
+    email: EmailStr
+    role: str
+    is_active: bool
     created_at: datetime
     updated_at: datetime
 
-    model_config = ConfigDict(
-        from_attributes=True,
-        json_schema_extra={
-            "example": {
-                "id": 1,
-                "name": "John Doe",
-                "email": "john.doe@example.com",
-                "role": "customer",
-                "created_at": "2026-11-01T09:00:00",
-                "updated_at": "2026-11-01T09:00:00"
-            }
-        }
-    )
+class TokenOut(StrictModel):
+    access_token: str
+    token_type: str
+    expires_in: int
+    user: UserOut
+
+class UserPage(StrictModel):
+    items: list[UserOut]
+    total: int
+    page: int
+    limit: int
+    pages: int
