@@ -5,13 +5,61 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
       MYSQL_DATABASE: ${DATABASE_NAME:-ecommerce}
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
     ports: ["3307:3306"]
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./app/sql/01_create_schema.sql:/docker-entrypoint-initdb.d/01_create_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
   app:
-    build: .
+    build:
+      context: .
     env_file: .env
     environment:
       DATABASE_HOST: db
       DATABASE_PORT: 3306
-      INVENTORY_MODE: fake
-    depends_on: [db]
+      INVENTORY_GRPC_ADDR: inventory-service:50051
+      INVENTORY_MODE: grpc
+    depends_on:
+      db:
+        condition: service_healthy
+      inventory-service:
+        condition: service_started
     ports: ["8000:8000"]
+    volumes: ["uploads:/app/uploads"]
+    healthcheck:
+      test: ["CMD","python","-c","import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+  inventory-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: inventory
+      POSTGRES_USER: inventory
+      POSTGRES_PASSWORD: ${INVENTORY_DB_PASSWORD:-inventory-local-password}
+    volumes:
+      - inventory_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U inventory -d inventory"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  inventory-service:
+    build:
+      context: .
+      dockerfile: inventory-service/Dockerfile
+    environment:
+      DATABASE_URL: postgres://inventory:${INVENTORY_DB_PASSWORD:-inventory-local-password}@inventory-db:5432/inventory?sslmode=disable
+      GRPC_PORT: 50051
+    depends_on:
+      inventory-db:
+        condition: service_healthy
+volumes:
+  uploads:
+  mysql_data:
+  inventory_pg_data:
