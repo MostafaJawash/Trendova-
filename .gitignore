@@ -27,3 +27,6 @@ ENV/
 
 # Logs
 *.log
+
+# Generated from proto/inventory.proto during builds
+app/integrations/inventory/generated/
