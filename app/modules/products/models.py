@@ -1,10 +1,10 @@
 """
 Product Model for E-Commerce application.
 """
-from sqlalchemy import Column, BigInteger, String, Text, Numeric, DateTime, ForeignKey, Index, CheckConstraint
+from sqlalchemy import Column, Integer, String, Text, Numeric, DateTime, ForeignKey, Index, CheckConstraint, Boolean, UniqueConstraint
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
-from app.core.database import Base
+from app.core.database import Base, IdType
 
 
 class Product(Base):
@@ -16,17 +16,15 @@ class Product(Base):
     __tablename__ = "products"
 
     id = Column(
-        BigInteger,
+        IdType,
         primary_key=True,
-        unsigned=True,
         autoincrement=True,
         comment="Unique identifier for the product"
     )
     category_id = Column(
-        BigInteger,
+        IdType,
         ForeignKey("categories.id", ondelete="RESTRICT"),
         nullable=False,
-        unsigned=True,
         comment="Foreign key to categories table"
     )
     name = Column(
@@ -49,6 +47,7 @@ class Product(Base):
         nullable=True,
         comment="URL to product image"
     )
+    is_active = Column(Boolean, nullable=False, default=True, server_default='1')
     created_at = Column(
         DateTime,
         nullable=False,
@@ -104,3 +103,22 @@ class Product(Base):
 
     def __repr__(self):
         return f"<Product(id={self.id}, name={self.name}, price={self.price})>"
+
+class Category(Base):
+    __tablename__ = 'categories'
+    id = Column(IdType, primary_key=True, autoincrement=True)
+    name = Column(String(150), nullable=False, unique=True)
+    description = Column(Text)
+    created_at = Column(DateTime, nullable=False, server_default=func.current_timestamp())
+    updated_at = Column(DateTime, nullable=False, server_default=func.current_timestamp(), onupdate=func.current_timestamp())
+    products = relationship('Product', back_populates='category')
+
+class Favorite(Base):
+    __tablename__ = 'favorites'
+    id = Column(IdType, primary_key=True, autoincrement=True)
+    user_id = Column(IdType, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    product_id = Column(IdType, ForeignKey('products.id', ondelete='CASCADE'), nullable=False)
+    created_at = Column(DateTime, nullable=False, server_default=func.current_timestamp())
+    user = relationship('User', back_populates='favorites')
+    product = relationship('Product', back_populates='favorites')
+    __table_args__ = (UniqueConstraint('user_id', 'product_id', name='uq_favorites_user_product'), Index('idx_favorites_product_id', 'product_id'))

@@ -28,7 +28,6 @@ class InventoryResponse(BaseModel):
         }
     )
 
-
 class InventoryResponseWithAvailable(InventoryResponse):
     """Schema for inventory response including calculated available quantity."""
     available_quantity: int
