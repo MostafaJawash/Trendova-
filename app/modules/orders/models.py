@@ -1,20 +1,10 @@
 """
 Order Model for E-Commerce application.
 """
-from enum import Enum as PyEnum
-from sqlalchemy import Column, BigInteger, String, Numeric, DateTime, ForeignKey, Index, CheckConstraint
+from sqlalchemy import Column, Integer, String, Numeric, DateTime, ForeignKey, Index, CheckConstraint, UniqueConstraint
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
-from app.core.database import Base
-
-
-class OrderStatus(str, PyEnum):
-    """Order status enumeration."""
-    PENDING = "Pending"
-    CONFIRMED = "Confirmed"
-    PREPARING = "Preparing"
-    DELIVERED = "Delivered"
-    CANCELLED = "Cancelled"
+from app.core.database import Base, IdType
 
 
 class Order(Base):
@@ -25,17 +15,15 @@ class Order(Base):
     __tablename__ = "orders"
 
     id = Column(
-        BigInteger,
+        IdType,
         primary_key=True,
-        unsigned=True,
         autoincrement=True,
         comment="Unique identifier for the order"
     )
     user_id = Column(
-        BigInteger,
+        IdType,
         ForeignKey("users.id", ondelete="RESTRICT"),
         nullable=False,
-        unsigned=True,
         comment="Foreign key to users table"
     )
     total_amount = Column(
@@ -46,9 +34,10 @@ class Order(Base):
     status = Column(
         String(30),
         nullable=False,
-        default=OrderStatus.PENDING,
+        default='pending',
         comment="Order status"
     )
+    reservation_id = Column(String(36), nullable=True, unique=True)
     created_at = Column(
         DateTime,
         nullable=False,
@@ -85,3 +74,16 @@ class Order(Base):
 
     def __repr__(self):
         return f"<Order(id={self.id}, user_id={self.user_id}, total={self.total_amount}, status={self.status})>"
+
+class OrderItem(Base):
+    __tablename__ = 'order_items'
+    id = Column(IdType, primary_key=True, autoincrement=True)
+    order_id = Column(IdType, ForeignKey('orders.id', ondelete='RESTRICT'), nullable=False)
+    product_id = Column(IdType, ForeignKey('products.id', ondelete='RESTRICT'), nullable=False)
+    product_name = Column(String(200))
+    quantity = Column(Integer, nullable=False)
+    unit_price = Column(Numeric(12, 2), nullable=False)
+    subtotal = Column(Numeric(14, 2), nullable=False)
+    order = relationship('Order', back_populates='order_items')
+    product = relationship('Product', back_populates='order_items')
+    __table_args__ = (UniqueConstraint('order_id', 'product_id', name='uq_order_items_order_product'), Index('idx_order_items_product_id', 'product_id'), CheckConstraint('quantity > 0', name='ck_order_items_quantity'), CheckConstraint('unit_price >= 0', name='ck_order_items_unit_price'), CheckConstraint('subtotal >= 0', name='ck_order_items_subtotal'))

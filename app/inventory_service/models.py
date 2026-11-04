@@ -3,10 +3,10 @@ Inventory Model for E-Commerce application.
 This model remains in the main database but is structured for future
 extraction to an independent Warehouse Service.
 """
-from sqlalchemy import Column, BigInteger, Integer, DateTime, ForeignKey, UniqueConstraint, CheckConstraint
+from sqlalchemy import Column, Integer, Integer, DateTime, ForeignKey, UniqueConstraint, CheckConstraint
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
-from app.core.database import Base
+from app.core.database import Base, IdType
 
 
 class Inventory(Base):
@@ -17,31 +17,27 @@ class Inventory(Base):
     __tablename__ = "inventory"
 
     id = Column(
-        BigInteger,
+        IdType,
         primary_key=True,
-        unsigned=True,
         autoincrement=True,
         comment="Unique identifier for the inventory record"
     )
     product_id = Column(
-        BigInteger,
+        IdType,
         ForeignKey("products.id", ondelete="CASCADE"),
         nullable=False,
-        unsigned=True,
         unique=True,
         comment="Foreign key to products table (unique - one-to-one)"
     )
     total_quantity = Column(
         Integer,
         nullable=False,
-        unsigned=True,
         default=0,
         comment="Total quantity in stock (non-negative)"
     )
     reserved_quantity = Column(
         Integer,
         nullable=False,
-        unsigned=True,
         default=0,
         comment="Quantity reserved for orders (non-negative)"
     )

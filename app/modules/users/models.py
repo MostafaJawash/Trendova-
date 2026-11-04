@@ -1,17 +1,10 @@
 """
 User Model for E-Commerce application.
 """
-from enum import Enum as PyEnum
-from sqlalchemy import Column, BigInteger, String, DateTime, Enum as SQLEnum, Index
+from sqlalchemy import Column, Integer, String, DateTime, Index, Boolean
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
-from app.core.database import Base
-
-
-class UserRole(str, PyEnum):
-    """User role enumeration."""
-    ADMIN = "admin"
-    CUSTOMER = "customer"
+from app.core.database import Base, IdType
 
 
 class User(Base):
@@ -21,9 +14,8 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(
-        BigInteger,
+        IdType,
         primary_key=True,
-        unsigned=True,
         autoincrement=True,
         comment="Unique identifier for the user"
     )
@@ -44,11 +36,12 @@ class User(Base):
         comment="Hashed password (never store plaintext)"
     )
     role = Column(
-        SQLEnum(UserRole),
+        String(20),
         nullable=False,
-        default=UserRole.CUSTOMER,
-        comment="User role: admin or customer"
+        default='user',
+        comment="User role: admin or user"
     )
+    is_active = Column(Boolean, nullable=False, default=True, server_default='1')
     created_at = Column(
         DateTime,
         nullable=False,

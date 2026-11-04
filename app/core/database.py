@@ -1,33 +1,20 @@
-"""
-Database configuration for E-Commerce application.
-"""
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, event
+from sqlalchemy import Integer
+from sqlalchemy.dialects import mysql
+from sqlalchemy.orm import declarative_base, sessionmaker
 from app.core.config import settings
-
-# Create engine with MySQL-specific settings
-engine = create_engine(
-    settings.database_url,
-    pool_pre_ping=True,
-    pool_recycle=3600,
-    echo=False
-)
-
-# Create session factory
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-# Create declarative base
+kwargs = {'connect_args': {'check_same_thread': False}} if settings.sqlalchemy_url.startswith('sqlite') else {'pool_pre_ping': True}
+engine = create_engine(settings.sqlalchemy_url, **kwargs)
+if engine.dialect.name=='mysql':
+    @event.listens_for(engine,'connect')
+    def _utc_connection(connection, _):
+        cursor=connection.cursor()
+        try:cursor.execute("SET time_zone = '+00:00'")
+        finally:cursor.close()
+SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, expire_on_commit=False)
 Base = declarative_base()
-
-
+IdType = Integer().with_variant(mysql.BIGINT(unsigned=True), 'mysql')
 def get_db():
-    """
-    Dependency for database session.
-    Yields a database session and ensures it's closed after use.
-    """
     db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    try: yield db
+    finally: db.close()

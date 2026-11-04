@@ -1,0 +1,20 @@
+syntax = "proto3";
+package inventory.v1;
+option go_package = "inventory-service/gen/inventoryv1;inventoryv1";
+
+service InventoryService {
+  rpc GetQuantity(GetQuantityRequest) returns (GetQuantityResponse);
+  rpc Reserve(ReserveRequest) returns (ReserveResponse);
+  rpc Release(ReleaseRequest) returns (ReleaseResponse);
+  rpc SetStock(SetStockRequest) returns (SetStockResponse);
+}
+message GetQuantityRequest { int64 product_id = 1; }
+message GetQuantityResponse { int64 product_id = 1; int32 available = 2; bool found = 3; }
+message ReserveItem { int64 product_id = 1; int32 quantity = 2; }
+message ReserveRequest { string reservation_id = 1; repeated ReserveItem items = 2; }
+message Shortage { int64 product_id = 1; int32 requested = 2; int32 available = 3; }
+message ReserveResponse { bool success = 1; repeated Shortage shortages = 2; bool already_reserved = 3; }
+message ReleaseRequest { string reservation_id = 1; }
+message ReleaseResponse { bool released = 1; }
+message SetStockRequest { int64 product_id = 1; int32 quantity = 2; }
+message SetStockResponse { int64 product_id = 1; int32 available = 2; }
