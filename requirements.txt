@@ -2,23 +2,31 @@
 
 # Web Framework
 fastapi==0.125.0
-uvicorn[standard]==0.54.0
+uvicorn[standard]==0.34.0
 
 # Database
 sqlalchemy==2.0.36
 pymysql==1.1.1
+cryptography==44.0.0
 
 # Data Validation
 pydantic==2.14.1
 pydantic-core==2.50.1
+pydantic-settings==2.7.1
 email-validator==2.3.0
 
 # Security
 PyJWT==2.10.1
-pwdlib[argon2]==0.3.1
+bcrypt==4.2.1
 
 # Environment Configuration
 python-dotenv==1.2.4
 
 # Other
 python-multipart==0.0.32
+Pillow==11.1.0
+httpx==0.28.1
+pytest==8.3.4
+grpcio==1.67.1
+grpcio-tools==1.67.1
+protobuf==5.28.3
