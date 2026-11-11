@@ -1,0 +1,32 @@
+{
+  "label": "c1_purge_list",
+  "only": "list",
+  "quick": false,
+  "deep_page_mode": "offset",
+  "generated_at": "2026-11-11T19:06:24.785Z",
+  "endpoints": {
+    "list": {
+      "count": 2373,
+      "req_per_s": 79.1,
+      "avg_ms": 212.3889456156762,
+      "p50_ms": 207.847112,
+      "p90_ms": 272.21856340000005,
+      "p95_ms": 301.482473,
+      "p99_ms": 360.4821126000008,
+      "max_ms": 484.709093,
+      "error_rate": 0
+    },
+    "list_deep": {
+      "count": 412,
+      "req_per_s": 13.73,
+      "avg_ms": 235.26726652912626,
+      "p50_ms": 231.96295800000001,
+      "p90_ms": 299.8056794,
+      "p95_ms": 326.4043795,
+      "p99_ms": 384.86312793,
+      "max_ms": 553.361573,
+      "error_rate": 0
+    }
+  },
+  "dropped_iterations": 0
+}

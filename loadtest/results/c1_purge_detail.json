@@ -1,0 +1,21 @@
+{
+  "label": "c1_purge_detail",
+  "only": "detail",
+  "quick": false,
+  "deep_page_mode": "offset",
+  "generated_at": "2026-11-11T19:05:30.297Z",
+  "endpoints": {
+    "detail": {
+      "count": 3591,
+      "req_per_s": 119.7,
+      "avg_ms": 167.1345387772206,
+      "p50_ms": 162.581066,
+      "p90_ms": 214.206214,
+      "p95_ms": 240.56350750000001,
+      "p99_ms": 293.0827198999999,
+      "max_ms": 650.872164,
+      "error_rate": 0
+    }
+  },
+  "dropped_iterations": 0
+}

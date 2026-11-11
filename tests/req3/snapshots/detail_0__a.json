@@ -1,0 +1,17 @@
+{
+ "id": 1,
+ "category_id": 1,
+ "name": "Wireless Headphones 0",
+ "description": "Great smart lamp headphones",
+ "price": "10.00",
+ "image_url": null,
+ "is_favorite": true,
+ "category": {
+  "id": 1,
+  "name": "Alpha"
+ },
+ "stock": {
+  "quantity": 48,
+  "status": "available"
+ }
+}

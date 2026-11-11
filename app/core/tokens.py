@@ -7,9 +7,14 @@ class RevokedToken(Base):
     jti = Column(String(64), primary_key=True)
     expires_at = Column(DateTime, nullable=False)
 
-def is_revoked(db, jti):
+def purge_expired(db):
+    """Housekeeping only: an expired JWT is rejected by its own `exp`, so purging is never
+    needed for correctness. Runs from a periodic background task, not on the request path."""
     result=db.execute(delete(RevokedToken).where(RevokedToken.expires_at < datetime.now(timezone.utc).replace(tzinfo=None)))
-    if result.rowcount:db.commit()
+    db.commit()
+    return result.rowcount
+
+def is_revoked(db, jti):
     return db.get(RevokedToken, jti) is not None
 
 def revoke(db, claims):

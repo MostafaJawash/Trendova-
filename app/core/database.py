@@ -11,6 +11,9 @@ if engine.dialect.name=='mysql':
         cursor=connection.cursor()
         try:cursor.execute("SET time_zone = '+00:00'")
         finally:cursor.close()
+if settings.db_query_count:
+    from app.core.query_counter import install as _install_query_counter
+    _install_query_counter(engine)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, expire_on_commit=False)
 Base = declarative_base()
 IdType = Integer().with_variant(mysql.BIGINT(unsigned=True), 'mysql')

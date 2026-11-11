@@ -1,0 +1,108 @@
+{
+ "items": [
+  {
+   "id": 4,
+   "user_id": 2,
+   "total_amount": "20.00",
+   "status": "pending",
+   "reservation_id": "<uuid>",
+   "created_at": "<ts>",
+   "updated_at": "<ts>",
+   "items": [
+    {
+     "id": 7,
+     "product_id": 9,
+     "product_name": "Portable Speaker 1",
+     "quantity": 1,
+     "unit_price": "20.00",
+     "subtotal": "20.00"
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "user_id": 2,
+   "total_amount": "311.48",
+   "status": "pending",
+   "reservation_id": "<uuid>",
+   "created_at": "<ts>",
+   "updated_at": "<ts>",
+   "items": [
+    {
+     "id": 4,
+     "product_id": 4,
+     "product_name": "Classic Watch 0",
+     "quantity": 3,
+     "unit_price": "35.50",
+     "subtotal": "106.50"
+    },
+    {
+     "id": 5,
+     "product_id": 5,
+     "product_name": "Pro Keyboard 0",
+     "quantity": 1,
+     "unit_price": "5.00",
+     "subtotal": "5.00"
+    },
+    {
+     "id": 6,
+     "product_id": 6,
+     "product_name": "Mini Router 0",
+     "quantity": 2,
+     "unit_price": "99.99",
+     "subtotal": "199.98"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "user_id": 2,
+   "total_amount": "20.00",
+   "status": "pending",
+   "reservation_id": "<uuid>",
+   "created_at": "<ts>",
+   "updated_at": "<ts>",
+   "items": [
+    {
+     "id": 3,
+     "product_id": 3,
+     "product_name": "Portable Speaker 0",
+     "quantity": 1,
+     "unit_price": "20.00",
+     "subtotal": "20.00"
+    }
+   ]
+  },
+  {
+   "id": 1,
+   "user_id": 2,
+   "total_amount": "40.00",
+   "status": "pending",
+   "reservation_id": "<uuid>",
+   "created_at": "<ts>",
+   "updated_at": "<ts>",
+   "items": [
+    {
+     "id": 1,
+     "product_id": 1,
+     "product_name": "Wireless Headphones 0",
+     "quantity": 2,
+     "unit_price": "10.00",
+     "subtotal": "20.00"
+    },
+    {
+     "id": 2,
+     "product_id": 2,
+     "product_name": "Smart Lamp 0",
+     "quantity": 1,
+     "unit_price": "20.00",
+     "subtotal": "20.00"
+    }
+   ]
+  }
+ ],
+ "total": 4,
+ "page": 1,
+ "limit": 10,
+ "pages": 1
+}

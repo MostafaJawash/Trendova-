@@ -68,6 +68,8 @@ class Order(Base):
     # Index for user filtering, status filtering, and check constraint
     __table_args__ = (
         Index("idx_orders_user_id", "user_id"),
+        # Req 3: "my orders" newest first without sorting the user's whole history
+        Index("idx_orders_user_created", "user_id", "created_at", "id"),
         Index("idx_orders_status", "status"),
         CheckConstraint("total_amount >= 0", name="ck_orders_total_amount"),
     )

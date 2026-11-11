@@ -1,0 +1,44 @@
+{
+ "items": [
+  {
+   "id": 24,
+   "category_id": 3,
+   "name": "Mini Router 3",
+   "description": "Great wireless headphones",
+   "price": "99.99",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 21,
+   "category_id": 3,
+   "name": "Portable Speaker 3",
+   "description": "Great classic watch headphones",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 18,
+   "category_id": 3,
+   "name": "Mini Router 2",
+   "description": "Great wireless headphones",
+   "price": "99.99",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 15,
+   "category_id": 3,
+   "name": "Portable Speaker 2",
+   "description": "Great classic watch",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  }
+ ],
+ "total": 8,
+ "page": 1,
+ "limit": 4,
+ "pages": 2
+}

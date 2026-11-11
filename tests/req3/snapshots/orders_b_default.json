@@ -1,0 +1,27 @@
+{
+ "items": [
+  {
+   "id": 5,
+   "user_id": 3,
+   "total_amount": "20.00",
+   "status": "pending",
+   "reservation_id": "<uuid>",
+   "created_at": "<ts>",
+   "updated_at": "<ts>",
+   "items": [
+    {
+     "id": 8,
+     "product_id": 2,
+     "product_name": "Smart Lamp 0",
+     "quantity": 1,
+     "unit_price": "20.00",
+     "subtotal": "20.00"
+    }
+   ]
+  }
+ ],
+ "total": 1,
+ "page": 1,
+ "limit": 10,
+ "pages": 1
+}

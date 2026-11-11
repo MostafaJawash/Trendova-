@@ -1,0 +1,98 @@
+{
+ "items": [
+  {
+   "id": 4,
+   "category_id": 1,
+   "name": "Classic Watch 0",
+   "description": "Great pro keyboard",
+   "price": "35.50",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 10,
+   "category_id": 1,
+   "name": "Classic Watch 1",
+   "description": "Great pro keyboard",
+   "price": "35.50",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 16,
+   "category_id": 1,
+   "name": "Classic Watch 2",
+   "description": "Great pro keyboard headphones",
+   "price": "35.50",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 22,
+   "category_id": 1,
+   "name": "Classic Watch 3",
+   "description": "Great pro keyboard",
+   "price": "35.50",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 6,
+   "category_id": 3,
+   "name": "Mini Router 0",
+   "description": "Great wireless headphones headphones",
+   "price": "99.99",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 12,
+   "category_id": 3,
+   "name": "Mini Router 1",
+   "description": "Great wireless headphones",
+   "price": "99.99",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 18,
+   "category_id": 3,
+   "name": "Mini Router 2",
+   "description": "Great wireless headphones",
+   "price": "99.99",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 24,
+   "category_id": 3,
+   "name": "Mini Router 3",
+   "description": "Great wireless headphones",
+   "price": "99.99",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 3,
+   "category_id": 3,
+   "name": "Portable Speaker 0",
+   "description": "Great classic watch",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 9,
+   "category_id": 3,
+   "name": "Portable Speaker 1",
+   "description": "Great classic watch",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  }
+ ],
+ "total": 23,
+ "page": 1,
+ "limit": 10,
+ "pages": 3
+}

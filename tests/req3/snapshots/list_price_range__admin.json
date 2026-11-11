@@ -1,0 +1,143 @@
+{
+ "items": [
+  {
+   "id": 22,
+   "category_id": 1,
+   "name": "Classic Watch 3",
+   "description": "Great pro keyboard",
+   "price": "35.50",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 21,
+   "category_id": 3,
+   "name": "Portable Speaker 3",
+   "description": "Great classic watch headphones",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 20,
+   "category_id": 2,
+   "name": "Smart Lamp 3",
+   "description": "Great portable speaker",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 19,
+   "category_id": 1,
+   "name": "Wireless Headphones 3",
+   "description": "Great smart lamp",
+   "price": "10.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 16,
+   "category_id": 1,
+   "name": "Classic Watch 2",
+   "description": "Great pro keyboard headphones",
+   "price": "35.50",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 15,
+   "category_id": 3,
+   "name": "Portable Speaker 2",
+   "description": "Great classic watch",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 14,
+   "category_id": 2,
+   "name": "Smart Lamp 2",
+   "description": "Great portable speaker",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 13,
+   "category_id": 1,
+   "name": "Wireless Headphones 2",
+   "description": "Great smart lamp",
+   "price": "10.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 10,
+   "category_id": 1,
+   "name": "Classic Watch 1",
+   "description": "Great pro keyboard",
+   "price": "35.50",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 9,
+   "category_id": 3,
+   "name": "Portable Speaker 1",
+   "description": "Great classic watch",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 7,
+   "category_id": 1,
+   "name": "Wireless Headphones 1",
+   "description": "Great smart lamp",
+   "price": "10.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 4,
+   "category_id": 1,
+   "name": "Classic Watch 0",
+   "description": "Great pro keyboard",
+   "price": "35.50",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 3,
+   "category_id": 3,
+   "name": "Portable Speaker 0",
+   "description": "Great classic watch",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 2,
+   "category_id": 2,
+   "name": "Smart Lamp 0",
+   "description": "Great portable speaker",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 1,
+   "category_id": 1,
+   "name": "Wireless Headphones 0",
+   "description": "Great smart lamp headphones",
+   "price": "10.00",
+   "image_url": null,
+   "is_favorite": false
+  }
+ ],
+ "total": 15,
+ "page": 1,
+ "limit": 20,
+ "pages": 1
+}

@@ -1,0 +1,32 @@
+{
+  "label": "m1_base_list",
+  "only": "list",
+  "quick": false,
+  "deep_page_mode": "offset",
+  "generated_at": "2026-11-11T19:30:08.640Z",
+  "endpoints": {
+    "list": {
+      "count": 2483,
+      "req_per_s": 82.77,
+      "avg_ms": 204.21138940112786,
+      "p50_ms": 198.296126,
+      "p90_ms": 263.2734208000001,
+      "p95_ms": 289.10916860000003,
+      "p99_ms": 352.5942078999995,
+      "max_ms": 561.192003,
+      "error_rate": 0
+    },
+    "list_deep": {
+      "count": 428,
+      "req_per_s": 14.27,
+      "avg_ms": 221.1033943177569,
+      "p50_ms": 218.00960500000002,
+      "p90_ms": 272.2090726,
+      "p95_ms": 300.84585085,
+      "p99_ms": 371.12703017000024,
+      "max_ms": 414.508854,
+      "error_rate": 0
+    }
+  },
+  "dropped_iterations": 0
+}

@@ -1,0 +1,20 @@
+{
+ "id": 4,
+ "category_id": 1,
+ "name": "Classic Watch 0",
+ "description": "Great pro keyboard",
+ "price": "35.50",
+ "image_url": null,
+ "is_favorite": false,
+ "category": {
+  "id": 1,
+  "name": "Alpha"
+ },
+ "stock": {
+  "quantity": 50,
+  "status": "available"
+ },
+ "is_active": true,
+ "created_at": "<ts>",
+ "updated_at": "<ts>"
+}

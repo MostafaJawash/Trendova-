@@ -1,0 +1,53 @@
+{
+ "items": [
+  {
+   "id": 20,
+   "category_id": 2,
+   "name": "Smart Lamp 3",
+   "description": "Great portable speaker",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 19,
+   "category_id": 1,
+   "name": "Wireless Headphones 3",
+   "description": "Great smart lamp",
+   "price": "10.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 14,
+   "category_id": 2,
+   "name": "Smart Lamp 2",
+   "description": "Great portable speaker",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 13,
+   "category_id": 1,
+   "name": "Wireless Headphones 2",
+   "description": "Great smart lamp",
+   "price": "10.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 7,
+   "category_id": 1,
+   "name": "Wireless Headphones 1",
+   "description": "Great smart lamp",
+   "price": "10.00",
+   "image_url": null,
+   "is_favorite": false
+  }
+ ],
+ "total": 7,
+ "page": 1,
+ "limit": 5,
+ "pages": 2
+}
