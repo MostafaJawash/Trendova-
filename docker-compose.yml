@@ -24,6 +24,7 @@ services:
       DATABASE_PORT: 3306
       INVENTORY_GRPC_ADDR: inventory-service:50051
       INVENTORY_MODE: grpc
+      DB_QUERY_COUNT: ${DB_QUERY_COUNT:-0}
     depends_on:
       db:
         condition: service_healthy
@@ -59,6 +60,21 @@ services:
     depends_on:
       inventory-db:
         condition: service_healthy
+  # Load generator, runs inside the compose network: scripts/bench.py drives it.
+  k6:
+    image: grafana/k6:1.0.0
+    profiles: ["loadtest"]
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      BASE_URL: http://app:8000/api/v1
+      K6_NO_USAGE_REPORT: "true"
+    volumes:
+      - ./loadtest:/loadtest
+    working_dir: /loadtest
+    entrypoint: ["k6"]
+    command: ["run", "/loadtest/k6/main.js"]
 volumes:
   uploads:
   mysql_data:

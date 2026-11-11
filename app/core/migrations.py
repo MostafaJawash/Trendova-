@@ -11,6 +11,12 @@ if not log.handlers:
     handler.setFormatter(logging.Formatter('%(levelname)s:%(name)s:%(message)s'))
     log.addHandler(handler)
 log.propagate=False
+# Req 3: performance indexes (idempotent; fresh databases also get them from the model definitions)
+PERF_INDEXES=[
+    ('products','idx_products_active_created','is_active, created_at, id'),
+    ('products','idx_products_cat_active_created','category_id, is_active, created_at, id'),
+    ('orders','idx_orders_user_created','user_id, created_at, id'),
+]
 ADDITIONS={
     'users':{'is_active':"BOOLEAN NOT NULL DEFAULT 1"},
     'products':{'is_active':"BOOLEAN NOT NULL DEFAULT 1"},
@@ -45,6 +51,11 @@ def migrate():
                 connection.execute(text('UPDATE order_items SET product_name=(SELECT name FROM products WHERE products.id=order_items.product_id) WHERE product_name IS NULL'))
     Base.metadata.create_all(bind=engine)
     if engine.dialect.name=='mysql':
+        with engine.begin() as connection:
+            for table,name,columns in PERF_INDEXES:
+                if name not in {i['name'] for i in inspect(connection).get_indexes(table)}:
+                    connection.execute(text(f'CREATE INDEX {name} ON {table} ({columns})'))
+                    log.info('Added index %s on %s',name,table)
         with engine.begin() as connection:
             columns={c['name']:c for c in inspect(connection).get_columns('notifications')}
             if 'DATETIME' in str(columns['created_at']['type']).upper():

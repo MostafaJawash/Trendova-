@@ -1,0 +1,107 @@
+{
+ "items": [
+  {
+   "id": 24,
+   "category_id": 3,
+   "name": "Mini Router 3",
+   "description": "Great wireless headphones",
+   "price": "99.99",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 21,
+   "category_id": 3,
+   "name": "Portable Speaker 3",
+   "description": "Great classic watch headphones",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 19,
+   "category_id": 1,
+   "name": "Wireless Headphones 3",
+   "description": "Great smart lamp",
+   "price": "10.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 18,
+   "category_id": 3,
+   "name": "Mini Router 2",
+   "description": "Great wireless headphones",
+   "price": "99.99",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 16,
+   "category_id": 1,
+   "name": "Classic Watch 2",
+   "description": "Great pro keyboard headphones",
+   "price": "35.50",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 13,
+   "category_id": 1,
+   "name": "Wireless Headphones 2",
+   "description": "Great smart lamp",
+   "price": "10.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 12,
+   "category_id": 3,
+   "name": "Mini Router 1",
+   "description": "Great wireless headphones",
+   "price": "99.99",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 11,
+   "category_id": 2,
+   "name": "Pro Keyboard 1",
+   "description": "Great mini router headphones",
+   "price": "5.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 7,
+   "category_id": 1,
+   "name": "Wireless Headphones 1",
+   "description": "Great smart lamp",
+   "price": "10.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 6,
+   "category_id": 3,
+   "name": "Mini Router 0",
+   "description": "Great wireless headphones headphones",
+   "price": "99.99",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 1,
+   "category_id": 1,
+   "name": "Wireless Headphones 0",
+   "description": "Great smart lamp headphones",
+   "price": "10.00",
+   "image_url": null,
+   "is_favorite": false
+  }
+ ],
+ "total": 11,
+ "page": 1,
+ "limit": 20,
+ "pages": 1
+}

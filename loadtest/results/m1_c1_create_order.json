@@ -1,0 +1,21 @@
+{
+  "label": "m1_c1_create_order",
+  "only": "create_order",
+  "quick": false,
+  "deep_page_mode": "offset",
+  "generated_at": "2026-11-11T19:35:42.477Z",
+  "endpoints": {
+    "create_order": {
+      "count": 150,
+      "req_per_s": 5,
+      "avg_ms": 28.08536254666667,
+      "p50_ms": 28.678403,
+      "p90_ms": 33.6253649,
+      "p95_ms": 36.78153285,
+      "p99_ms": 48.26339044999989,
+      "max_ms": 55.414647,
+      "error_rate": 0
+    }
+  },
+  "dropped_iterations": 0
+}

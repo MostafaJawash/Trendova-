@@ -1,0 +1,17 @@
+{
+ "id": 5,
+ "category_id": 2,
+ "name": "Pro Keyboard 0",
+ "description": "Great mini router",
+ "price": "5.00",
+ "image_url": null,
+ "is_favorite": true,
+ "category": {
+  "id": 2,
+  "name": "Beta"
+ },
+ "stock": {
+  "quantity": 53,
+  "status": "available"
+ }
+}

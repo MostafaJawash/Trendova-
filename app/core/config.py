@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     upload_dir: str = 'uploads'; max_upload_mb: int = 5; inventory_mode: str = 'fake'
     inventory_grpc_addr: str = 'inventory-service:50051'
     inventory_timeout_seconds: float = 2.0
+    db_query_count: bool = False  # DB_QUERY_COUNT=1 exposes X-DB-Query-Count (diagnostics only)
+    revoked_purge_interval_seconds: int = 300  # background purge of expired revoked tokens
     @property
     def sqlalchemy_url(self): return self.database_url or f'mysql+pymysql://{self.database_user}:{self.database_password}@{self.database_host}:{self.database_port}/{self.database_name}'
 settings = Settings(); Path(settings.upload_dir).mkdir(parents=True, exist_ok=True)

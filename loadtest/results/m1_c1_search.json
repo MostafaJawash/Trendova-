@@ -1,0 +1,21 @@
+{
+  "label": "m1_c1_search",
+  "only": "search",
+  "quick": false,
+  "deep_page_mode": "offset",
+  "generated_at": "2026-11-11T19:37:30.805Z",
+  "endpoints": {
+    "search": {
+      "count": 2110,
+      "req_per_s": 70.33,
+      "avg_ms": 285.1658489203791,
+      "p50_ms": 282.34902,
+      "p90_ms": 349.34892290000005,
+      "p95_ms": 376.48863775,
+      "p99_ms": 442.87241423,
+      "max_ms": 617.297312,
+      "error_rate": 0
+    }
+  },
+  "dropped_iterations": 0
+}

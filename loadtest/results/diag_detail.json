@@ -1,0 +1,21 @@
+{
+  "label": "diag_detail",
+  "only": "detail",
+  "quick": false,
+  "deep_page_mode": "offset",
+  "generated_at": "2026-11-11T18:44:24.331Z",
+  "endpoints": {
+    "detail": {
+      "count": 3670,
+      "req_per_s": 122.33,
+      "avg_ms": 163.58595740762976,
+      "p50_ms": 159.0855655,
+      "p90_ms": 208.3905864,
+      "p95_ms": 228.44498315,
+      "p99_ms": 267.37494188999995,
+      "max_ms": 400.33269,
+      "error_rate": 0
+    }
+  },
+  "dropped_iterations": 0
+}

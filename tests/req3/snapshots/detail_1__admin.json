@@ -1,0 +1,20 @@
+{
+ "id": 2,
+ "category_id": 2,
+ "name": "Smart Lamp 0",
+ "description": "Great portable speaker",
+ "price": "20.00",
+ "image_url": null,
+ "is_favorite": false,
+ "category": {
+  "id": 2,
+  "name": "Beta"
+ },
+ "stock": {
+  "quantity": 49,
+  "status": "available"
+ },
+ "is_active": true,
+ "created_at": "<ts>",
+ "updated_at": "<ts>"
+}

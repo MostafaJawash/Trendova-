@@ -1,0 +1,35 @@
+{
+ "items": [
+  {
+   "id": 14,
+   "category_id": 2,
+   "name": "Smart Lamp 2",
+   "description": "Great portable speaker",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 11,
+   "category_id": 2,
+   "name": "Pro Keyboard 1",
+   "description": "Great mini router headphones",
+   "price": "5.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 5,
+   "category_id": 2,
+   "name": "Pro Keyboard 0",
+   "description": "Great mini router",
+   "price": "5.00",
+   "image_url": null,
+   "is_favorite": false
+  }
+ ],
+ "total": 7,
+ "page": 2,
+ "limit": 3,
+ "pages": 3
+}

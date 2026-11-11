@@ -1,0 +1,35 @@
+{
+ "items": [
+  {
+   "id": 22,
+   "category_id": 1,
+   "name": "Classic Watch 3",
+   "description": "Great pro keyboard",
+   "price": "35.50",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 19,
+   "category_id": 1,
+   "name": "Wireless Headphones 3",
+   "description": "Great smart lamp",
+   "price": "10.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 16,
+   "category_id": 1,
+   "name": "Classic Watch 2",
+   "description": "Great pro keyboard headphones",
+   "price": "35.50",
+   "image_url": null,
+   "is_favorite": false
+  }
+ ],
+ "total": 8,
+ "page": 1,
+ "limit": 3,
+ "pages": 3
+}

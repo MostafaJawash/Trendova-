@@ -1,0 +1,53 @@
+{
+ "items": [
+  {
+   "id": 19,
+   "category_id": 1,
+   "name": "Wireless Headphones 3",
+   "description": "Great smart lamp",
+   "price": "10.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 18,
+   "category_id": 3,
+   "name": "Mini Router 2",
+   "description": "Great wireless headphones",
+   "price": "99.99",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 17,
+   "category_id": 2,
+   "name": "Pro Keyboard 2",
+   "description": "Great mini router",
+   "price": "5.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 16,
+   "category_id": 1,
+   "name": "Classic Watch 2",
+   "description": "Great pro keyboard headphones",
+   "price": "35.50",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 15,
+   "category_id": 3,
+   "name": "Portable Speaker 2",
+   "description": "Great classic watch",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  }
+ ],
+ "total": 23,
+ "page": 2,
+ "limit": 5,
+ "pages": 5
+}

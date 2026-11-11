@@ -1,0 +1,32 @@
+{
+  "label": "ab_idx_list_4A",
+  "only": "list",
+  "quick": false,
+  "deep_page_mode": "offset",
+  "generated_at": "2026-11-11T19:49:22.107Z",
+  "endpoints": {
+    "list": {
+      "count": 1948,
+      "req_per_s": 64.93,
+      "avg_ms": 259.68325330287496,
+      "p50_ms": 252.35585500000002,
+      "p90_ms": 335.6378779,
+      "p95_ms": 368.63499249999995,
+      "p99_ms": 444.19375907999995,
+      "max_ms": 677.817786,
+      "error_rate": 0
+    },
+    "list_deep": {
+      "count": 330,
+      "req_per_s": 11,
+      "avg_ms": 288.82696467272734,
+      "p50_ms": 282.5940905,
+      "p90_ms": 357.9254284,
+      "p95_ms": 399.0370626,
+      "p99_ms": 462.62432093,
+      "max_ms": 545.680409,
+      "error_rate": 0
+    }
+  },
+  "dropped_iterations": 0
+}

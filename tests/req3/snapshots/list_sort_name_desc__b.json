@@ -1,0 +1,98 @@
+{
+ "items": [
+  {
+   "id": 19,
+   "category_id": 1,
+   "name": "Wireless Headphones 3",
+   "description": "Great smart lamp",
+   "price": "10.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 13,
+   "category_id": 1,
+   "name": "Wireless Headphones 2",
+   "description": "Great smart lamp",
+   "price": "10.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 7,
+   "category_id": 1,
+   "name": "Wireless Headphones 1",
+   "description": "Great smart lamp",
+   "price": "10.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 1,
+   "category_id": 1,
+   "name": "Wireless Headphones 0",
+   "description": "Great smart lamp headphones",
+   "price": "10.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 20,
+   "category_id": 2,
+   "name": "Smart Lamp 3",
+   "description": "Great portable speaker",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 14,
+   "category_id": 2,
+   "name": "Smart Lamp 2",
+   "description": "Great portable speaker",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 2,
+   "category_id": 2,
+   "name": "Smart Lamp 0",
+   "description": "Great portable speaker",
+   "price": "20.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 23,
+   "category_id": 2,
+   "name": "Pro Keyboard 3",
+   "description": "Great mini router",
+   "price": "5.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 17,
+   "category_id": 2,
+   "name": "Pro Keyboard 2",
+   "description": "Great mini router",
+   "price": "5.00",
+   "image_url": null,
+   "is_favorite": false
+  },
+  {
+   "id": 11,
+   "category_id": 2,
+   "name": "Pro Keyboard 1",
+   "description": "Great mini router headphones",
+   "price": "5.00",
+   "image_url": null,
+   "is_favorite": false
+  }
+ ],
+ "total": 23,
+ "page": 1,
+ "limit": 10,
+ "pages": 3
+}
