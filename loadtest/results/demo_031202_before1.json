@@ -1,0 +1,43 @@
+{
+  "label": "demo_031202_before1",
+  "only": "list,search",
+  "quick": false,
+  "deep_page_mode": "offset",
+  "generated_at": "2026-11-12T00:12:24.830Z",
+  "endpoints": {
+    "list": {
+      "count": 159,
+      "req_per_s": 31.8,
+      "avg_ms": 525.9180271509432,
+      "p50_ms": 519.965553,
+      "p90_ms": 729.8860198000002,
+      "p95_ms": 782.5441754999999,
+      "p99_ms": 857.5759860399994,
+      "max_ms": 914.203253,
+      "error_rate": 0
+    },
+    "list_deep": {
+      "count": 31,
+      "req_per_s": 6.2,
+      "avg_ms": 597.9320295483872,
+      "p50_ms": 605.27336,
+      "p90_ms": 819.918415,
+      "p95_ms": 883.700467,
+      "p99_ms": 916.0062403,
+      "max_ms": 926.388625,
+      "error_rate": 0
+    },
+    "search": {
+      "count": 111,
+      "req_per_s": 22.2,
+      "avg_ms": 1070.9308215675678,
+      "p50_ms": 1062.079044,
+      "p90_ms": 1498.183794,
+      "p95_ms": 1644.050087,
+      "p99_ms": 1839.9736102000002,
+      "max_ms": 1914.928086,
+      "error_rate": 0
+    }
+  },
+  "dropped_iterations": 0
+}

@@ -1,0 +1,6 @@
+# Test runner for the live Requirement 3 tests: the app image + the docker CLI (stop/start Redis, replica, inventory).
+# The docker socket is mounted at run time (see the `tester` service in docker-compose.yml).
+FROM trendova-req3-app
+USER root
+COPY --from=docker:27-cli /usr/local/bin/docker /usr/local/bin/docker
+WORKDIR /app

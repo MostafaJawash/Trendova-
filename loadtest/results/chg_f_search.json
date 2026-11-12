@@ -1,0 +1,51 @@
+{
+ "name": "chg_f_search",
+ "paths": [
+  "/products?search=wireless&limit=20"
+ ],
+ "as": "customer",
+ "rounds": 3,
+ "block": 20,
+ "ports": {
+  "A": 8020,
+  "B": 8000
+ },
+ "variants": {
+  "A": {
+   "p50_ms": 149.45,
+   "p95_ms": 294.65,
+   "mean_ms": 165.5,
+   "n": 60,
+   "round_p50_ms": [
+    163.44,
+    140.57,
+    135.07
+   ],
+   "selects_per_request": [
+    5
+   ],
+   "x_cache": null,
+   "x_db_query_count": null
+  },
+  "B": {
+   "p50_ms": 71.88,
+   "p95_ms": 122.6,
+   "mean_ms": 80.55,
+   "n": 60,
+   "round_p50_ms": [
+    71.82,
+    65.26,
+    89.26
+   ],
+   "selects_per_request": [
+    5
+   ],
+   "x_cache": null,
+   "x_db_query_count": null
+  }
+ },
+ "p50_diff_ms_A_minus_B": 77.57,
+ "round_spread_ms": 28.37,
+ "ratio_A_over_B": 2.079,
+ "verdict": "B faster"
+}

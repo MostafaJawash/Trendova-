@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request, Query, Response
 from sqlalchemy.orm import Session
 from app.core.database import get_db
-from app.core.dependencies import current, admin
+from app.core.dependencies import current, admin, read_db
 from app.core.tokens import revoke
 from app.core.schemas import ERROR_RESPONSES, paginate
 from app.modules.users.schemas import Register, Login, Profile, UserOut, TokenOut, UserPage
@@ -31,7 +31,7 @@ def edit_me(data: Profile, auth=Depends(current), db: Session = Depends(get_db))
     return service.update_me(db, auth[0], auth[1], data)
 
 @router.get('', response_model=UserPage, summary='List users', description='Admin list with search, role and pagination.')
-def users(page: int = Query(1, ge=1), limit: int = Query(10, ge=1, le=100), search: str | None = None, role: str | None = None, _=Depends(admin), db: Session = Depends(get_db)):
+def users(page: int = Query(1, ge=1), limit: int = Query(10, ge=1, le=100), search: str | None = None, role: str | None = None, _=Depends(admin), db: Session = Depends(read_db)):
     items, total = service.list_users(db, page, limit, search, role)
     return paginate(items, total, page, limit)
 

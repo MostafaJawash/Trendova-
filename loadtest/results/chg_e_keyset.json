@@ -1,0 +1,56 @@
+{
+ "name": "chg_e_keyset",
+ "paths": {
+  "A": [
+   "/products?limit=20&page=900"
+  ],
+  "B": [
+   "/products?limit=20&cursor=WyJjcmVhdGVkX2F0IiwiZGVzYyIsIjIwMjUtMTItMjBUMDA6NDc6NTAiLDIwMjVd"
+  ]
+ },
+ "as": "customer",
+ "rounds": 3,
+ "block": 40,
+ "ports": {
+  "A": 8000,
+  "B": 8000
+ },
+ "variants": {
+  "A": {
+   "p50_ms": 97.61,
+   "p95_ms": 174.9,
+   "mean_ms": 102.71,
+   "n": 120,
+   "round_p50_ms": [
+    85.17,
+    124.16,
+    73.12
+   ],
+   "selects_per_request": [
+    5
+   ],
+   "x_cache": null,
+   "x_db_query_count": null
+  },
+  "B": {
+   "p50_ms": 31.88,
+   "p95_ms": 62.2,
+   "mean_ms": 34.09,
+   "n": 120,
+   "round_p50_ms": [
+    33.3,
+    50.43,
+    19.32
+   ],
+   "selects_per_request": [
+    5
+   ],
+   "x_cache": null,
+   "x_db_query_count": null
+  }
+ },
+ "p50_diff_ms_A_minus_B": 65.73,
+ "round_spread_ms": 51.04,
+ "ratio_A_over_B": 3.062,
+ "verdict": "B faster"
+}

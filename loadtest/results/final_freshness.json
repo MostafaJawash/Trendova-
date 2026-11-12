@@ -1,0 +1,14 @@
+{
+  "label": "final_freshness",
+  "only": null,
+  "quick": false,
+  "generated_at": "2026-11-12T01:42:16.841Z",
+  "stale_reads": 0,
+  "fresh_checks": 528,
+  "not_modified_ratio": 0.8012422360248447,
+  "browser_bytes": 815940,
+  "read_after_write_p50_ms": 174,
+  "read_after_write_p99_ms": 262.59000000000003,
+  "http_reqs": 2937,
+  "http_req_failed_rate": 0
+}

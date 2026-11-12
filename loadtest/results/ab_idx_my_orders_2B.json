@@ -1,0 +1,21 @@
+{
+  "label": "ab_idx_my_orders_2B",
+  "only": "my_orders",
+  "quick": false,
+  "deep_page_mode": "offset",
+  "generated_at": "2026-11-11T21:42:59.981Z",
+  "endpoints": {
+    "my_orders": {
+      "count": 1234,
+      "req_per_s": 41.13,
+      "avg_ms": 493.03767754132997,
+      "p50_ms": 462.46932749999996,
+      "p90_ms": 672.4984409000001,
+      "p95_ms": 765.0079012999998,
+      "p99_ms": 1178.7522825100048,
+      "max_ms": 1827.430162,
+      "error_rate": 0
+    }
+  },
+  "dropped_iterations": 0
+}

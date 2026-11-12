@@ -15,7 +15,7 @@ const LABEL = __ENV.RUN_LABEL || 'adhoc';
 const ONLY = __ENV.ONLY || '';                         // list|detail|search|my_orders|create_order|mixed
 const QUICK = __ENV.QUICK === '1';                     // 20s smoke profile (run_phase1.py)
 const DEEP_MODE = __ENV.DEEP_PAGE_MODE || 'offset';    // offset (default) | keyset (uses next_cursor)
-const CUSTOMERS = 50;                                   // customer001..customer050@loadtest.example
+const CUSTOMERS = Number(__ENV.CUSTOMERS || 50);        // customer001..customer050@loadtest.example (demo --quick uses fewer: shorter setup)
 const PASSWORD = __ENV.CUSTOMER_PASSWORD || 'LoadTest123!';
 const CATEGORIES = 40, PRODUCTS = Number(__ENV.PRODUCTS || 20000);
 const DEEP_PAGE = 900, DEEP_LIMIT = 20;                // offset 17,980
@@ -26,14 +26,17 @@ const NOUNS = ['Headphones', 'Keyboard', 'Backpack', 'Lamp', 'Blender', 'Monitor
 const ADJECTIVES = ['Wireless', 'Portable', 'Ergonomic', 'Premium', 'Compact', 'Smart', 'Classic', 'Rugged', 'Ultra', 'Eco',
   'Vintage', 'Modern', 'Deluxe', 'Mini', 'Pro'];
 
-const D = QUICK
+// Durations: the defaults ARE the fixed profile. WARMUP_S / SCEN_S / MIXED_S only shorten a run (scripts/demo_req3.py).
+const D0 = QUICK
   ? { warmup: 5, scen: 20, mixed: 20 }
   : { warmup: 20, scen: 30, mixed: 60 };
+const D = { warmup: Number(__ENV.WARMUP_S || D0.warmup), scen: Number(__ENV.SCEN_S || D0.scen), mixed: Number(__ENV.MIXED_S || D0.mixed) };
 const VUS = QUICK ? 5 : 20, MIXED_VUS = QUICK ? 5 : 30, CREATE_RATE = 5;
-const GAP = 3;
+const GAP = Number(__ENV.GAP_S || 3);                   // pause between sequential scenarios (demo shortens it)
 
 const ALL = ['list', 'detail', 'search', 'my_orders', 'create_order', 'mixed'];
-const selected = ONLY ? ALL.filter((n) => n === ONLY) : ALL;
+const ONLY_LIST = ONLY ? ONLY.split(',') : [];             // ONLY may list several scenarios (demo): ONLY=list,search
+const selected = ONLY ? ALL.filter((n) => ONLY_LIST.includes(n)) : ALL;
 if (ONLY && selected.length === 0) throw new Error('unknown ONLY=' + ONLY);
 
 const closed = (execName, vus, dur, start) => ({ executor: 'constant-vus', exec: execName, vus, duration: dur + 's', startTime: start + 's', gracefulStop: '5s' });

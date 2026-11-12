@@ -3,7 +3,7 @@ import logging
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -54,14 +54,22 @@ async def lifespan(app:FastAPI):
 
 app=FastAPI(title='Trendova API v1',version='v1',lifespan=lifespan,openapi_tags=[{'name':name} for name in ('health','auth','users','categories','products','favorites','orders','notifications','dashboard')])
 app.middleware('http')(security_headers)
+if settings.gzip_enabled:
+    from starlette.middleware.gzip import GZipMiddleware
+    app.add_middleware(GZipMiddleware,minimum_size=1000)
+    from app.core.middleware import MergeVary
+    app.add_middleware(MergeVary)
 
 if settings.db_query_count:
     from app.core.query_counter import count_queries
     @app.middleware('http')
     async def query_count_header(request:Request,call_next):
+        from app.integrations.inventory.gateway import start_rpc_count
+        box=start_rpc_count()
         with count_queries() as log:
             response=await call_next(request)
         response.headers['X-DB-Query-Count']=str(log.count)
+        response.headers['X-Inventory-Rpc-Calls']=str(box[0])
         return response
 
 def error_response(status,code,message,details=None,headers=None):
@@ -83,6 +91,15 @@ async def unexpected_error(_:Request,e:Exception):
 
 @app.get('/health',tags=['health'],summary='Health check',description='Application is serving requests.',response_model=dict)
 def health():return {'status':'ok'}
+
+from app.core.dependencies import admin as _admin_dep
+from app.core import cache as _cache, redis as _rds
+@app.get('/internal/cache-stats',tags=['health'],summary='Cache counters (admin only)',description='In-process hit/miss/bypass/fill counters of this worker plus Redis availability.')
+def cache_stats(_=Depends(_admin_dep)):
+    return {'enabled':_cache.enabled(),'redis_up':_rds.ping(),**_cache.stats()}
+@app.post('/internal/cache-stats/reset',tags=['health'],summary='Reset cache counters (admin only)',status_code=204,response_model=None)
+def cache_stats_reset(_=Depends(_admin_dep)):
+    _cache.reset_stats();return Response(status_code=204)
 
 prefix='/api/v1'
 for router in (users_router.auth_router,users_router.router,products_router.categories_router,products_router.router,products_router.favorites_router,orders_router.router,notifications_router.router,dashboard_router.router):

@@ -7,3 +7,9 @@ __pycache__
 .pytest_cache
 tests
 uploads
+.ab
+loadtest
+docs
+union_test.db
+verify*.db
+Trendova-

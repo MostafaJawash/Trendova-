@@ -13,3 +13,14 @@ func TestNormalize(t *testing.T){
 }
 func TestReserveValidation(t *testing.T){s:=&Server{};tests:=[]*inventoryv1.ReserveRequest{{},{ReservationId:"x"},{ReservationId:"x",Items:[]*inventoryv1.ReserveItem{{ProductId:1,Quantity:0}}}};for _,r:=range tests{_,e:=s.Reserve(context.Background(),r);if status.Code(e)!=codes.InvalidArgument{t.Fatalf("request %#v: %v",r,e)}}
 }
+
+func TestDedupeIDs(t *testing.T){
+ got,e:=dedupeIDs([]int64{3,1,3,2,1});if e!=nil||len(got)!=3||got[0]!=3||got[1]!=1||got[2]!=2{t.Fatalf("got=%v err=%v",got,e)}
+ if _,e=dedupeIDs([]int64{1,0});e==nil{t.Fatal("non-positive id must be rejected")}
+ big:=make([]int64,MaxBatch+1);for i:=range big{big[i]=int64(i+1)};if _,e=dedupeIDs(big);e==nil{t.Fatal("batch above MaxBatch must be rejected")}
+}
+func TestGetStockBatchValidation(t *testing.T){
+ s:=&Server{}
+ r,e:=s.GetStockBatch(context.Background(),&inventoryv1.GetStockBatchRequest{});if e!=nil||len(r.GetItems())!=0{t.Fatalf("empty request must return an empty response: %v %v",r,e)}
+ _,e=s.GetStockBatch(context.Background(),&inventoryv1.GetStockBatchRequest{ProductIds:[]int64{-1}});if status.Code(e)!=codes.InvalidArgument{t.Fatalf("got %v",e)}
+}
