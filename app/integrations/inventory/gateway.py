@@ -6,6 +6,13 @@ from threading import RLock
 from app.core.config import settings
 log = logging.getLogger(__name__)
 class InventoryUnavailableError(Exception): pass
+from contextvars import ContextVar
+_rpc_calls:ContextVar=ContextVar('inventory_rpc_calls',default=None)  # per-request gRPC call counter (diagnostics)
+def start_rpc_count():
+ box=[0];_rpc_calls.set(box);return box
+def _count_rpc():
+ box=_rpc_calls.get()
+ if box is not None:box[0]+=1
 @dataclass
 class ReserveResult: success: bool; shortages: list
 class InventoryGateway(ABC):
@@ -17,6 +24,12 @@ class InventoryGateway(ABC):
  def release(self, reservation_id): ...
  @abstractmethod
  def set_stock(self, product_id, quantity): ...
+ def get_quantities(self, product_ids):
+  """{product_id: quantity} for many ids. Default = N single calls; the gRPC gateway overrides it with ONE call."""
+  return self.get_quantities_naive(product_ids)
+ def get_quantities_naive(self, product_ids):
+  """Per-item path (N calls). Kept ONLY as the benchmark/test variant of get_quantities."""
+  return {int(i):self.get_quantity(i) for i in dict.fromkeys(int(x) for x in product_ids)}
 class FakeInventoryGateway(InventoryGateway):
  def __init__(self): self.stock={}; self.reservations={}; self.lock=RLock()
  def get_quantity(self, product_id):
@@ -47,6 +60,7 @@ class GrpcInventoryGateway(InventoryGateway):
    self.pb2=inventory_pb2;self.channel=channel or grpc.insecure_channel(address or settings.inventory_grpc_addr);self.stub=inventory_pb2_grpc.InventoryServiceStub(self.channel)
  def _request(self,name,**kwargs):return kwargs if self.pb2 is None else getattr(self.pb2,name)(**kwargs)
  def _rpc(self,call,request,timeout=None):
+  _count_rpc()
   try:return call(request,timeout=self.timeout if timeout is None else timeout)
   except Exception as exc:
    code=getattr(exc,'code',lambda:None)()
@@ -59,6 +73,17 @@ class GrpcInventoryGateway(InventoryGateway):
  def get_quantity(self,product_id):
   r=self._rpc(self.stub.GetQuantity,self._request('GetQuantityRequest',product_id=int(product_id)))
   return int(getattr(r,'available',r.get('available',0) if isinstance(r,dict) else 0))
+ def get_quantities(self,product_ids):
+  """ONE GetStockBatch call per <=inventory_batch_max ids (same 2 s deadline / error mapping as the single call)."""
+  ids=list(dict.fromkeys(int(x) for x in product_ids));out={}
+  for i in range(0,len(ids),settings.inventory_batch_max):
+   chunk=ids[i:i+settings.inventory_batch_max]
+   r=self._rpc(self.stub.GetStockBatch,self._request('GetStockBatchRequest',product_ids=chunk))
+   items=getattr(r,'items',None) if self.pb2 is not None else r.get('items',[])
+   for it in items:
+    pid=int(it['product_id'] if isinstance(it,dict) else it.product_id);av=int(it['available'] if isinstance(it,dict) else it.available);out[pid]=av
+   for pid in chunk:out.setdefault(pid,0)  # unknown id -> 0, like the single call
+  return out
  def reserve(self,reservation_id,items):
   request=self._request('ReserveRequest',reservation_id=reservation_id,items=items) if self.pb2 is None else self.pb2.ReserveRequest(reservation_id=reservation_id,items=[self.pb2.ReserveItem(product_id=int(x['product_id']),quantity=int(x['quantity'])) for x in items])
   try:r=self._rpc(self.stub.Reserve,request)

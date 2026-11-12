@@ -1,0 +1,60 @@
+{
+ "seconds": 22,
+ "docker_stats": {
+  "app-v1-1": {
+   "cpu_mean": 8.9,
+   "cpu_max": 34.4,
+   "samples": 4
+  },
+  "app-1": {
+   "cpu_mean": 43.4,
+   "cpu_max": 90.7,
+   "samples": 4
+  },
+  "inventory-service-1": {
+   "cpu_mean": 0.2,
+   "cpu_max": 1.0,
+   "samples": 4
+  },
+  "app-v0-1": {
+   "cpu_mean": 0.7,
+   "cpu_max": 1.5,
+   "samples": 4
+  },
+  "app-v2-1": {
+   "cpu_mean": 0.3,
+   "cpu_max": 0.5,
+   "samples": 4
+  },
+  "app-v3-1": {
+   "cpu_mean": 3.7,
+   "cpu_max": 13.9,
+   "samples": 4
+  },
+  "db-replica-1": {
+   "cpu_mean": 4.8,
+   "cpu_max": 13.2,
+   "samples": 4
+  },
+  "app-prev-1": {
+   "cpu_mean": 0.2,
+   "cpu_max": 0.3,
+   "samples": 4
+  },
+  "redis-1": {
+   "cpu_mean": 2.4,
+   "cpu_max": 5.1,
+   "samples": 4
+  },
+  "inventory-db-1": {
+   "cpu_mean": 2.8,
+   "cpu_max": 10.6,
+   "samples": 4
+  },
+  "db-1": {
+   "cpu_mean": 5.6,
+   "cpu_max": 10.6,
+   "samples": 4
+  }
+ }
+}

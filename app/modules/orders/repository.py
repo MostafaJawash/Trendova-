@@ -1,5 +1,5 @@
 from sqlalchemy import func
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, selectinload
 from app.modules.orders.models import Order, OrderItem
 
 def create(db,user_id,reservation_id,total,lines):
@@ -11,11 +11,11 @@ def create(db,user_id,reservation_id,total,lines):
     return get(db,order.id)
 def get(db,id):return db.query(Order).options(joinedload(Order.order_items)).filter_by(id=id).first()
 def list_orders(db,user_id,page,limit,status=None,filter_user_id=None):
-    q=db.query(Order).options(joinedload(Order.order_items))
+    q=db.query(Order).options(selectinload(Order.order_items))   # 2 statements for any page size (no join row multiplication)
     if user_id is not None:q=q.filter(Order.user_id==user_id)
     if filter_user_id is not None:q=q.filter(Order.user_id==filter_user_id)
     if status:q=q.filter(Order.status==status)
-    total=q.count()
+    total=q.with_entities(func.count(Order.id)).order_by(None).scalar()   # plain SELECT count(id) ... (no derived-table wrapper)
     return q.order_by(Order.created_at.desc(),Order.id.desc()).offset((page-1)*limit).limit(limit).all(),total
 def has_orders(db,user_id):return db.query(Order).filter_by(user_id=user_id).first() is not None
 def count(db):return db.query(Order).count()

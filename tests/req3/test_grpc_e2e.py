@@ -20,15 +20,15 @@ def _login(c, email, password):
 
 
 def test_order_flows_through_the_go_inventory_service():
-    tag = uuid.uuid4().hex[:8]
+    tag = 'req3_test_' + uuid.uuid4().hex[:8]   # throw-away data: unique name, removed by scripts/req3_cleanup.py
     with httpx.Client(base_url=BASE, timeout=30) as c:
         admin = _login(c, os.getenv('E2E_ADMIN_EMAIL', 'admin@example.com'), os.getenv('E2E_ADMIN_PASSWORD', 'ChangeMe123!'))
         # initial stock is written to Postgres through the SetStock RPC
-        p = c.post('/products', headers=admin, data={'name': f'e2e-{tag}', 'price': '9.99', 'category_id': 1, 'initial_quantity': 5})
+        p = c.post('/products', headers=admin, data={'name': tag, 'price': '9.99', 'category_id': 1, 'initial_quantity': 5})
         assert p.status_code == 201, p.text
         pid = p.json()['id']
         try:
-            email = f'e2e-{tag}@example.com'
+            email = f'{tag}@example.com'
             assert c.post('/auth/register', json={'email': email, 'name': 'E2E', 'password': 'password123'}).status_code == 201
             user = _login(c, email, 'password123')
 

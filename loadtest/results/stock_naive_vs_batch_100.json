@@ -1,0 +1,56 @@
+{
+ "name": "stock_naive_vs_batch_100",
+ "paths": {
+  "A": [
+   "/products?limit=100&include_stock=true&stock_mode=naive"
+  ],
+  "B": [
+   "/products?limit=100&include_stock=true&stock_mode=batch"
+  ]
+ },
+ "as": "customer",
+ "rounds": 3,
+ "block": 30,
+ "ports": {
+  "A": 8030,
+  "B": 8030
+ },
+ "variants": {
+  "A": {
+   "p50_ms": 147.43,
+   "p95_ms": 281.08,
+   "mean_ms": 164.2,
+   "n": 90,
+   "round_p50_ms": [
+    174.54,
+    133.74,
+    143.27
+   ],
+   "selects_per_request": [
+    5
+   ],
+   "x_cache": null,
+   "x_db_query_count": null
+  },
+  "B": {
+   "p50_ms": 32.26,
+   "p95_ms": 49.25,
+   "mean_ms": 35.85,
+   "n": 90,
+   "round_p50_ms": [
+    34.24,
+    34.94,
+    29.93
+   ],
+   "selects_per_request": [
+    5
+   ],
+   "x_cache": null,
+   "x_db_query_count": null
+  }
+ },
+ "p50_diff_ms_A_minus_B": 115.17,
+ "round_spread_ms": 40.8,
+ "ratio_A_over_B": 4.57,
+ "verdict": "B faster"
+}

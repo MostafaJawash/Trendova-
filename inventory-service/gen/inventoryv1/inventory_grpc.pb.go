@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	InventoryService_GetQuantity_FullMethodName = "/inventory.v1.InventoryService/GetQuantity"
-	InventoryService_Reserve_FullMethodName     = "/inventory.v1.InventoryService/Reserve"
-	InventoryService_Release_FullMethodName     = "/inventory.v1.InventoryService/Release"
-	InventoryService_SetStock_FullMethodName    = "/inventory.v1.InventoryService/SetStock"
+	InventoryService_GetQuantity_FullMethodName   = "/inventory.v1.InventoryService/GetQuantity"
+	InventoryService_Reserve_FullMethodName       = "/inventory.v1.InventoryService/Reserve"
+	InventoryService_Release_FullMethodName       = "/inventory.v1.InventoryService/Release"
+	InventoryService_SetStock_FullMethodName      = "/inventory.v1.InventoryService/SetStock"
+	InventoryService_GetStockBatch_FullMethodName = "/inventory.v1.InventoryService/GetStockBatch"
 )
 
 // InventoryServiceClient is the client API for InventoryService service.
@@ -33,6 +34,8 @@ type InventoryServiceClient interface {
 	Reserve(ctx context.Context, in *ReserveRequest, opts ...grpc.CallOption) (*ReserveResponse, error)
 	Release(ctx context.Context, in *ReleaseRequest, opts ...grpc.CallOption) (*ReleaseResponse, error)
 	SetStock(ctx context.Context, in *SetStockRequest, opts ...grpc.CallOption) (*SetStockResponse, error)
+	// Req 3: stock of many products in ONE round trip (one SQL query). Existing RPCs are unchanged.
+	GetStockBatch(ctx context.Context, in *GetStockBatchRequest, opts ...grpc.CallOption) (*GetStockBatchResponse, error)
 }
 
 type inventoryServiceClient struct {
@@ -83,6 +86,16 @@ func (c *inventoryServiceClient) SetStock(ctx context.Context, in *SetStockReque
 	return out, nil
 }
 
+func (c *inventoryServiceClient) GetStockBatch(ctx context.Context, in *GetStockBatchRequest, opts ...grpc.CallOption) (*GetStockBatchResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetStockBatchResponse)
+	err := c.cc.Invoke(ctx, InventoryService_GetStockBatch_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InventoryServiceServer is the server API for InventoryService service.
 // All implementations must embed UnimplementedInventoryServiceServer
 // for forward compatibility.
@@ -91,6 +104,8 @@ type InventoryServiceServer interface {
 	Reserve(context.Context, *ReserveRequest) (*ReserveResponse, error)
 	Release(context.Context, *ReleaseRequest) (*ReleaseResponse, error)
 	SetStock(context.Context, *SetStockRequest) (*SetStockResponse, error)
+	// Req 3: stock of many products in ONE round trip (one SQL query). Existing RPCs are unchanged.
+	GetStockBatch(context.Context, *GetStockBatchRequest) (*GetStockBatchResponse, error)
 	mustEmbedUnimplementedInventoryServiceServer()
 }
 
@@ -112,6 +127,9 @@ func (UnimplementedInventoryServiceServer) Release(context.Context, *ReleaseRequ
 }
 func (UnimplementedInventoryServiceServer) SetStock(context.Context, *SetStockRequest) (*SetStockResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetStock not implemented")
+}
+func (UnimplementedInventoryServiceServer) GetStockBatch(context.Context, *GetStockBatchRequest) (*GetStockBatchResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStockBatch not implemented")
 }
 func (UnimplementedInventoryServiceServer) mustEmbedUnimplementedInventoryServiceServer() {}
 func (UnimplementedInventoryServiceServer) testEmbeddedByValue()                          {}
@@ -206,6 +224,24 @@ func _InventoryService_SetStock_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InventoryService_GetStockBatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStockBatchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InventoryServiceServer).GetStockBatch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InventoryService_GetStockBatch_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InventoryServiceServer).GetStockBatch(ctx, req.(*GetStockBatchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InventoryService_ServiceDesc is the grpc.ServiceDesc for InventoryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +264,10 @@ var InventoryService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetStock",
 			Handler:    _InventoryService_SetStock_Handler,
+		},
+		{
+			MethodName: "GetStockBatch",
+			Handler:    _InventoryService_GetStockBatch_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -1,0 +1,51 @@
+{
+ "name": "chg_d_dashboard",
+ "paths": [
+  "/dashboard/stats"
+ ],
+ "as": "admin",
+ "rounds": 3,
+ "block": 1,
+ "ports": {
+  "A": 8020,
+  "B": 8000
+ },
+ "variants": {
+  "A": {
+   "p50_ms": 13339.41,
+   "p95_ms": 13611.32,
+   "mean_ms": 13280.02,
+   "n": 3,
+   "round_p50_ms": [
+    13339.41,
+    13611.32,
+    12889.32
+   ],
+   "selects_per_request": [
+    15
+   ],
+   "x_cache": null,
+   "x_db_query_count": null
+  },
+  "B": {
+   "p50_ms": 12963.88,
+   "p95_ms": 13260.38,
+   "mean_ms": 13027.02,
+   "n": 3,
+   "round_p50_ms": [
+    13260.38,
+    12963.88,
+    12856.81
+   ],
+   "selects_per_request": [
+    11
+   ],
+   "x_cache": null,
+   "x_db_query_count": null
+  }
+ },
+ "p50_diff_ms_A_minus_B": 375.53,
+ "round_spread_ms": 722.0,
+ "ratio_A_over_B": 1.029,
+ "verdict": "within noise"
+}

@@ -1,0 +1,21 @@
+{
+  "label": "replica_lag_k6_create_order",
+  "only": "create_order",
+  "quick": false,
+  "deep_page_mode": "offset",
+  "generated_at": "2026-11-11T23:02:56.991Z",
+  "endpoints": {
+    "create_order": {
+      "count": 151,
+      "req_per_s": 5.03,
+      "avg_ms": 86.20740600662249,
+      "p50_ms": 77.069599,
+      "p90_ms": 131.806098,
+      "p95_ms": 154.80949199999998,
+      "p99_ms": 177.566436,
+      "max_ms": 181.851919,
+      "error_rate": 0
+    }
+  },
+  "dropped_iterations": 0
+}

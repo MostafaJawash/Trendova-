@@ -1,0 +1,9 @@
+{
+  "label": "adhoc",
+  "only": "list",
+  "quick": true,
+  "deep_page_mode": "offset",
+  "generated_at": "2026-11-11T23:04:27.054Z",
+  "endpoints": {},
+  "dropped_iterations": 0
+}

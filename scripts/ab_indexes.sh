@@ -6,7 +6,7 @@ cd "$(dirname "$0")/.."
 sql(){ docker compose exec -T db sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" ecommerce 2>/dev/null' <<<"$1"; }
 drop(){ sql "DROP INDEX idx_products_active_created ON products; DROP INDEX idx_products_cat_active_created ON products; DROP INDEX idx_orders_user_created ON orders;"; }
 make(){ sql "CREATE INDEX idx_products_active_created ON products (is_active, created_at, id); CREATE INDEX idx_products_cat_active_created ON products (category_id, is_active, created_at, id); CREATE INDEX idx_orders_user_created ON orders (user_id, created_at, id);"; }
-trap make EXIT
+trap make EXIT   # restore the indexes when the script ends (it must not be killed mid-run)
 for o in "$@"; do
   i=0
   for cond in A B B A; do

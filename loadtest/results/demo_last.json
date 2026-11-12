@@ -1,0 +1,207 @@
+{
+ "mode": "demo_req3.py",
+ "finished_at": "2026-11-12 07:53:16",
+ "runtime_s": 496,
+ "results": {
+  "0": true,
+  "1": true,
+  "2": true,
+  "3": true,
+  "4": true,
+  "5": true,
+  "6": true,
+  "7": true,
+  "8": true
+ },
+ "step_titles": {
+  "0": "Preflight",
+  "1": "Slow queries: EXPLAIN ANALYZE before vs after",
+  "2": "N+1: statements per request and gRPC calls per request",
+  "3": "What slows an index down? create_order with and without the new orders index",
+  "4": "Read replica and read-your-writes",
+  "5": "Redis cache: MISS/HIT, TTL, invalidation, live stock, fail-open, stampede",
+  "6": "ETag / 304",
+  "7": "Load test: the same k6 workload, interleaved BEFORE / AFTER / BEFORE / AFTER",
+  "8": "Test suite"
+ },
+ "step_seconds": {
+  "0": 12.1,
+  "1": 25.2,
+  "2": 17.8,
+  "3": 37.0,
+  "4": 8.2,
+  "5": 17.7,
+  "6": 0.2,
+  "7": 188.9,
+  "8": 176.4
+ },
+ "scoreboard": [
+  [
+   "Realistic data volume",
+   "dev DB: 12 orders (optimization_log)",
+   "products=20,000 / orders=307,535 / order_items=914,446",
+   true
+  ],
+  [
+   "EXPLAIN / query speed-up",
+   "filesort + full scans",
+   "hot queries 64.98x..1112.52x faster",
+   true
+  ],
+  [
+   "N+1 fixed (DB + gRPC)",
+   "gRPC N calls ([10, 50, 100])",
+   "1 call ([1, 1, 1]); SELECTs constant",
+   true
+  ],
+  [
+   "Index write cost (info)",
+   "without new index",
+   "24.6 -> 33.0 orders/s",
+   true
+  ],
+  [
+   "Read replica + read-your-writes",
+   "every read on the primary",
+   "author sees own write; lag proven real",
+   true
+  ],
+  [
+   "Redis cache (TTL, invalidation)",
+   "every request hits MySQL",
+   "MISS 29.4 ms -> HIT 15.4 ms",
+   true
+  ],
+  [
+   "ETag / 304",
+   "238 bytes every time",
+   "0 bytes on 304",
+   true
+  ],
+  [
+   "Load test p50/p95/p99",
+   "767/1189/1334 ms",
+   "340/614/764 ms (1.94x p95)",
+   true
+  ],
+  [
+   "A product edit is visible at once",
+   "n/a",
+   "stale_reads = 0",
+   true
+  ],
+  [
+   "Test suite",
+   "n/a",
+   "64 passed, 0 failed",
+   true
+  ]
+ ],
+ "facts": {
+  "counts": {
+   "users": 2001,
+   "products": 20000,
+   "orders": 307535,
+   "order_items": 914446,
+   "categories": 40
+  },
+  "inventory_rows": 20000,
+  "flags": {
+   "USE_READ_REPLICA": "true",
+   "CACHE_ENABLED": "true",
+   "ETAG_ENABLED": "true"
+  },
+  "explain_ratios": [
+   64.98,
+   1024.05,
+   1112.52,
+   212.78,
+   82.33
+  ],
+  "selects_product list": {
+   "before": [
+    4,
+    4,
+    4
+   ],
+   "after": [
+    5,
+    5,
+    5
+   ]
+  },
+  "selects_my orders": {
+   "before": [
+    4,
+    4,
+    4
+   ],
+   "after": [
+    5,
+    5,
+    5
+   ]
+  },
+  "grpc_calls": {
+   "naive": [
+    10,
+    50,
+    100
+   ],
+   "batch": [
+    1,
+    1,
+    1
+   ]
+  },
+  "index_write_cost": {
+   "without": 24.6,
+   "with": 33.0,
+   "noise_spread": 8.0
+  },
+  "ryw": {
+   "author_sees": true,
+   "other_sees_during_lag": false,
+   "other_sees_after": true,
+   "replica_rejects_writes": true
+  },
+  "cache": {
+   "miss_ms": 29.4,
+   "hit_ms": 15.4,
+   "ttl_list": "61",
+   "ttl_detail": "317",
+   "fills": 1
+  },
+  "etag": {
+   "bytes_full": 238,
+   "bytes_304": 0,
+   "list_identity": 3621,
+   "list_gzip": 336
+  },
+  "load": {
+   "p50_factor": 2.2589779858743,
+   "p95_factor": 1.9354653057619522,
+   "p99_factor": 1.7461569064167934,
+   "throughput_factor": 1.6716738197424892,
+   "drift_pct": 34.55621301775148,
+   "stale_reads": 0,
+   "not_modified_ratio": 0.6666666666666666,
+   "before": {
+    "p50_ms": 767.4685913,
+    "p95_ms": 1189.33970522,
+    "p99_ms": 1333.9182314249997
+   },
+   "after": {
+    "p50_ms": 339.7415097,
+    "p95_ms": 614.4980753099999,
+    "p99_ms": 763.9165910709999
+   }
+  },
+  "tests": {
+   "passed": 64,
+   "failed": 0,
+   "skipped": 0,
+   "error": 0
+  }
+ }
+}

@@ -1,0 +1,13 @@
+{
+ "enabled": true,
+ "redis_up": true,
+ "hit": 5863,
+ "miss": 2265,
+ "bypass": 0,
+ "fills": 2265,
+ "stampede_waits": 15,
+ "stampede_fallthrough": 0,
+ "invalidations": 0,
+ "errors": 0,
+ "hit_ratio": 0.7213
+}

@@ -1,0 +1,51 @@
+{
+ "name": "chg_c_orders_10",
+ "paths": [
+  "/orders?limit=10"
+ ],
+ "as": "customer",
+ "rounds": 3,
+ "block": 25,
+ "ports": {
+  "A": 8020,
+  "B": 8000
+ },
+ "variants": {
+  "A": {
+   "p50_ms": 20.63,
+   "p95_ms": 49.91,
+   "mean_ms": 25.93,
+   "n": 75,
+   "round_p50_ms": [
+    16.69,
+    36.59,
+    20.63
+   ],
+   "selects_per_request": [
+    4
+   ],
+   "x_cache": null,
+   "x_db_query_count": null
+  },
+  "B": {
+   "p50_ms": 19.68,
+   "p95_ms": 36.52,
+   "mean_ms": 23.6,
+   "n": 75,
+   "round_p50_ms": [
+    16.96,
+    30.95,
+    22.08
+   ],
+   "selects_per_request": [
+    5
+   ],
+   "x_cache": null,
+   "x_db_query_count": null
+  }
+ },
+ "p50_diff_ms_A_minus_B": 0.95,
+ "round_spread_ms": 19.9,
+ "ratio_A_over_B": 1.048,
+ "verdict": "within noise"
+}

@@ -2,7 +2,7 @@ import jwt
 from fastapi import Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
-from app.core.database import get_db
+from app.core.database import get_db, route_read
 from app.core.errors import AppError
 from app.core.security import decode_access_token
 from app.core.tokens import is_revoked
@@ -30,3 +30,14 @@ def admin(auth=Depends(current)):
     if user.role != 'admin':
         raise AppError(403, 'FORBIDDEN', 'Admin access required')
     return user
+
+def read_db(auth=Depends(current), primary: Session = Depends(get_db)):
+    """Session for reads that may be slightly stale (my orders, admin lists, dashboard stats): the read replica,
+    or the PRIMARY when the replica is off/down, Redis is unreachable, or this user wrote in the last RYW window.
+    On the primary it REUSES the request's own session (`get_db` is resolved once per request, `current` uses it too)."""
+    db, owned = route_read(auth[0].id, primary=primary)
+    try:
+        yield db
+    finally:
+        if owned:
+            db.close()

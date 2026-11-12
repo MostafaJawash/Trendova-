@@ -7,6 +7,8 @@ service InventoryService {
   rpc Reserve(ReserveRequest) returns (ReserveResponse);
   rpc Release(ReleaseRequest) returns (ReleaseResponse);
   rpc SetStock(SetStockRequest) returns (SetStockResponse);
+  // Req 3: stock of many products in ONE round trip (one SQL query). Existing RPCs are unchanged.
+  rpc GetStockBatch(GetStockBatchRequest) returns (GetStockBatchResponse);
 }
 message GetQuantityRequest { int64 product_id = 1; }
 message GetQuantityResponse { int64 product_id = 1; int32 available = 2; bool found = 3; }
@@ -18,3 +20,8 @@ message ReleaseRequest { string reservation_id = 1; }
 message ReleaseResponse { bool released = 1; }
 message SetStockRequest { int64 product_id = 1; int32 quantity = 2; }
 message SetStockResponse { int64 product_id = 1; int32 available = 2; }
+// Duplicate ids are collapsed; every distinct requested id is answered (found=false, available=0 when unknown),
+// in first-seen order. Empty request -> empty response. More than 500 ids -> INVALID_ARGUMENT.
+message GetStockBatchRequest { repeated int64 product_ids = 1; }
+message StockItem { int64 product_id = 1; int32 available = 2; bool found = 3; }
+message GetStockBatchResponse { repeated StockItem items = 1; }

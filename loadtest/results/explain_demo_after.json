@@ -1,0 +1,303 @@
+{
+ "label": "demo_after",
+ "generated_at": "2026-11-12T04:45:37.010611Z",
+ "scenarios": {
+  "list: category page 1 (limit 20)": {
+   "wall_ms": 61.57,
+   "select_statements": 3,
+   "plans": [
+    {
+     "sql": "SELECT count(products.id) AS count_1 FROM products WHERE products.is_active = true AND products.category_id = ",
+     "time_ms": 0.528,
+     "top_rows": 1,
+     "max_rows_examined": 1549,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Covering index lookup products using idx_products_cat_active_created"
+     ]
+    },
+    {
+     "sql": "SELECT products.id AS products_id, products.category_id AS products_category_id, products.name AS products_nam",
+     "time_ms": 0.0594,
+     "top_rows": 20,
+     "max_rows_examined": 20,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Index lookup products using idx_products_cat_active_created"
+     ]
+    },
+    {
+     "sql": "SELECT favorites.product_id AS favorites_product_id FROM favorites WHERE favorites.user_id = %(user_id_1)s AND",
+     "time_ms": 0.0083,
+     "top_rows": 0,
+     "max_rows_examined": 0,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Covering index scan favorites using uq_favorites_user_product"
+     ]
+    }
+   ]
+  },
+  "list: deep page 900 (offset 17,980)": {
+   "wall_ms": 42.51,
+   "select_statements": 3,
+   "plans": [
+    {
+     "sql": "SELECT count(products.id) AS count_1 FROM products WHERE products.is_active = true",
+     "time_ms": 5.94,
+     "top_rows": 1,
+     "max_rows_examined": 20000,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Covering index lookup products using idx_products_active_created"
+     ]
+    },
+    {
+     "sql": "SELECT products.id AS products_id, products.category_id AS products_category_id, products.name AS products_nam",
+     "time_ms": 29.4,
+     "top_rows": 20,
+     "max_rows_examined": 18000,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Index lookup products using idx_products_active_created"
+     ]
+    },
+    {
+     "sql": "SELECT favorites.product_id AS favorites_product_id FROM favorites WHERE favorites.user_id = %(user_id_1)s AND",
+     "time_ms": 0.0087,
+     "top_rows": 0,
+     "max_rows_examined": 0,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Covering index scan favorites using uq_favorites_user_product"
+     ]
+    }
+   ]
+  },
+  "list: newest page 1": {
+   "wall_ms": 8.3,
+   "select_statements": 3,
+   "plans": [
+    {
+     "sql": "SELECT count(products.id) AS count_1 FROM products WHERE products.is_active = true",
+     "time_ms": 5.82,
+     "top_rows": 1,
+     "max_rows_examined": 20000,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Covering index lookup products using idx_products_active_created"
+     ]
+    },
+    {
+     "sql": "SELECT products.id AS products_id, products.category_id AS products_category_id, products.name AS products_nam",
+     "time_ms": 0.0582,
+     "top_rows": 20,
+     "max_rows_examined": 20,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Index lookup products using idx_products_active_created"
+     ]
+    },
+    {
+     "sql": "SELECT favorites.product_id AS favorites_product_id FROM favorites WHERE favorites.user_id = %(user_id_1)s AND",
+     "time_ms": 0.0098,
+     "top_rows": 0,
+     "max_rows_examined": 0,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Covering index scan favorites using uq_favorites_user_product"
+     ]
+    }
+   ]
+  },
+  "list: keyset deep page (cursor)": {
+   "wall_ms": 9.8,
+   "select_statements": 3,
+   "plans": [
+    {
+     "sql": "SELECT count(products.id) AS count_1 FROM products WHERE products.is_active = true",
+     "time_ms": 5.35,
+     "top_rows": 1,
+     "max_rows_examined": 20000,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Covering index lookup products using idx_products_active_created"
+     ]
+    },
+    {
+     "sql": "SELECT products.id AS products_id, products.category_id AS products_category_id, products.name AS products_nam",
+     "time_ms": 0.0551,
+     "top_rows": 20,
+     "max_rows_examined": 20,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Index range scan products using idx_products_active_created"
+     ]
+    },
+    {
+     "sql": "SELECT favorites.product_id AS favorites_product_id FROM favorites WHERE favorites.user_id = %(user_id_1)s AND",
+     "time_ms": 0.006,
+     "top_rows": 0,
+     "max_rows_examined": 0,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Covering index scan favorites using uq_favorites_user_product"
+     ]
+    }
+   ]
+  },
+  "search: \"wireless\" (limit 20)": {
+   "wall_ms": 58.08,
+   "select_statements": 3,
+   "plans": [
+    {
+     "sql": "SELECT count(products.id) AS count_1 FROM products WHERE products.is_active = true AND (lower(products.name) L",
+     "time_ms": 51.4,
+     "top_rows": 1,
+     "max_rows_examined": 20000,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Index lookup products using idx_products_active_created"
+     ]
+    },
+    {
+     "sql": "SELECT products.id AS products_id, products.category_id AS products_category_id, products.name AS products_nam",
+     "time_ms": 0.352,
+     "top_rows": 20,
+     "max_rows_examined": 128,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Index lookup products using idx_products_active_created"
+     ]
+    },
+    {
+     "sql": "SELECT favorites.product_id AS favorites_product_id FROM favorites WHERE favorites.user_id = %(user_id_1)s AND",
+     "time_ms": 0.0057,
+     "top_rows": 0,
+     "max_rows_examined": 0,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Covering index scan favorites using uq_favorites_user_product"
+     ]
+    }
+   ]
+  },
+  "my_orders: hottest user page 1 (limit 10)": {
+   "wall_ms": 17.42,
+   "select_statements": 3,
+   "plans": [
+    {
+     "sql": "SELECT count(orders.id) AS count_1 FROM orders WHERE orders.user_id = %(user_id_1)s",
+     "time_ms": 4.42,
+     "top_rows": 1,
+     "max_rows_examined": 16478,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Covering index lookup orders using idx_orders_user_created"
+     ]
+    },
+    {
+     "sql": "SELECT orders.id AS orders_id, orders.user_id AS orders_user_id, orders.total_amount AS orders_total_amount, o",
+     "time_ms": 0.968,
+     "top_rows": 10,
+     "max_rows_examined": 10,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Index lookup orders using idx_orders_user_created"
+     ]
+    },
+    {
+     "sql": "SELECT order_items.order_id AS order_items_order_id, order_items.id AS order_items_id, order_items.product_id ",
+     "time_ms": 0.278,
+     "top_rows": 18,
+     "max_rows_examined": 18,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Index range scan order_items using uq_order_items_order_product"
+     ]
+    }
+   ]
+  },
+  "my_orders: hottest user limit 50": {
+   "wall_ms": 12.3,
+   "select_statements": 3,
+   "plans": [
+    {
+     "sql": "SELECT count(orders.id) AS count_1 FROM orders WHERE orders.user_id = %(user_id_1)s",
+     "time_ms": 3.9,
+     "top_rows": 1,
+     "max_rows_examined": 16478,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Covering index lookup orders using idx_orders_user_created"
+     ]
+    },
+    {
+     "sql": "SELECT orders.id AS orders_id, orders.user_id AS orders_user_id, orders.total_amount AS orders_total_amount, o",
+     "time_ms": 0.871,
+     "top_rows": 50,
+     "max_rows_examined": 50,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Index lookup orders using idx_orders_user_created"
+     ]
+    },
+    {
+     "sql": "SELECT order_items.order_id AS order_items_order_id, order_items.id AS order_items_id, order_items.product_id ",
+     "time_ms": 0.422,
+     "top_rows": 97,
+     "max_rows_examined": 97,
+     "filesort": false,
+     "full_scan": false,
+     "access": [
+      "Index range scan order_items using uq_order_items_order_product"
+     ]
+    }
+   ]
+  },
+  "detail: product 12345": {
+   "wall_ms": 5.54,
+   "select_statements": 2,
+   "plans": [
+    {
+     "sql": "SELECT products.id AS products_id, products.category_id AS products_category_id, products.name AS products_nam",
+     "time_ms": null,
+     "top_rows": null,
+     "max_rows_examined": null,
+     "filesort": false,
+     "full_scan": false,
+     "access": []
+    },
+    {
+     "sql": "SELECT favorites.product_id AS favorites_product_id FROM favorites WHERE favorites.user_id = %(user_id_1)s AND",
+     "time_ms": null,
+     "top_rows": null,
+     "max_rows_examined": null,
+     "filesort": false,
+     "full_scan": false,
+     "access": []
+    }
+   ]
+  }
+ }
+}

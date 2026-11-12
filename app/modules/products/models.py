@@ -97,7 +97,7 @@ class Product(Base):
 
     # Index for category filtering and check constraint
     __table_args__ = (
-        Index("idx_category_id", "category_id"),
+        # idx_category_id (category_id) was dropped by app/core/migrations_req3_indexes.py: the composite below covers it
         # Req 3: index-ordered "newest first" listing, with and without a category filter
         Index("idx_products_active_created", "is_active", "created_at", "id"),
         Index("idx_products_cat_active_created", "category_id", "is_active", "created_at", "id"),

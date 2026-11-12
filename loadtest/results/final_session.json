@@ -1,0 +1,35 @@
+{
+ "started": "2026-11-12 03:40:35",
+ "host_power_plan": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)",
+ "docker_total_memory_bytes": 8153333760,
+ "wslconfig": "no .wslconfig (WSL2 defaults)",
+ "docker_ncpu": 8,
+ "prefix": "final",
+ "variants": [
+  "V0",
+  "V1",
+  "V2",
+  "V3",
+  "V4"
+ ],
+ "rounds": 2,
+ "control": "V4",
+ "only": null,
+ "quick": false,
+ "runs": [
+  "final_V4_control_start_r0",
+  "final_V0_r1",
+  "final_V1_r1",
+  "final_V2_r1",
+  "final_V3_r1",
+  "final_V4_r1",
+  "final_V0_r2",
+  "final_V1_r2",
+  "final_V2_r2",
+  "final_V3_r2",
+  "final_V4_r2",
+  "final_V4_control_end_r0",
+  "final_V4_cold_r0"
+ ],
+ "finished": "2026-11-12 04:41:09"
+}

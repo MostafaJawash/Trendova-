@@ -18,6 +18,12 @@ class ProductOut(StrictModel):
     id: int; category_id: int; name: str; description: str | None; price: Decimal; image_url: str | None; is_favorite: bool = False
 class ProductPage(StrictModel):
     items: list[ProductOut]; total: int; page: int; limit: int; pages: int
+    next_cursor: str | None = None   # keyset pagination: pass it back as ?cursor= to get the next page
+class ProductStockOut(ProductOut):
+    stock: dict[str, Any]
+class ProductStockPage(StrictModel):   # include_stock=true
+    items: list[ProductStockOut]; total: int; page: int; limit: int; pages: int
+    next_cursor: str | None = None
 class ProductDetail(ProductOut):
     category: dict[str, Any] | None = None
     stock: dict[str, Any]

@@ -1,0 +1,21 @@
+{
+  "label": "ab_idx_create_order_3B",
+  "only": "create_order",
+  "quick": false,
+  "deep_page_mode": "offset",
+  "generated_at": "2026-11-11T21:49:35.631Z",
+  "endpoints": {
+    "create_order": {
+      "count": 150,
+      "req_per_s": 5,
+      "avg_ms": 42.05513524000003,
+      "p50_ms": 36.12486,
+      "p90_ms": 66.04075639999999,
+      "p95_ms": 86.18252829999999,
+      "p99_ms": 116.82379123,
+      "max_ms": 121.164923,
+      "error_rate": 0
+    }
+  },
+  "dropped_iterations": 0
+}

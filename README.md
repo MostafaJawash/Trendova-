@@ -92,3 +92,19 @@ Run `docker compose up --build -d`, then `python scripts/seed_demo.py`. Use
 `sh scripts/demo_inventory_down.sh` or `./scripts/demo_inventory_down.ps1` for
 the outage/recovery demonstration. Generate Python stubs with
 `sh scripts/gen_proto.sh` or `./scripts/gen_proto.ps1`; generated files are ignored.
+
+## Requirement 3 - performance and caching
+
+Compose project `trendova-req3` (primary MySQL + read replica + Redis + app + Go inventory service). Documents: `docs/req3/` (`STATE.md`, `optimization_log.md`,
+`cache_policy.md`, `http_cache.md`, `replica.md`, `REPORT_AR.md`, `DEMO_AR.md`, `TESTS_MAP_AR.md`).
+
+```bash
+docker compose up -d --build            # app, db, db-replica (+ one-shot replica-init), redis, inventory
+python scripts/seed.py                  # 20k products / 300k orders / 900k items (about 90 s, idempotent)
+python scripts/run_phase1.py            # stack -> health/replication -> seed -> pytest req3_phase1 -> 20 s k6 smoke -> PASS/FAIL
+python scripts/run_phase2.py            # same for req3_phase2 (replica, Redis, ETag, freshness)
+python scripts/demo_req3.py [--quick]   # live before/after demo for the oral discussion
+python scripts/bench_final.py           # full interleaved V0..V4 benchmark (about 1 h) + regenerate the Arabic report tables
+```
+Feature flags (env): `USE_READ_REPLICA`, `CACHE_ENABLED`, `ETAG_ENABLED`, `GZIP_ENABLED`, `RYW_WINDOW_SECONDS`, TTLs `CACHE_LIST_TTL_SECONDS` / `CACHE_DETAIL_TTL_SECONDS`.
+The earlier dev stack (project `trendova-`) is untouched: `docker compose -p trendova- up -d` restores it.

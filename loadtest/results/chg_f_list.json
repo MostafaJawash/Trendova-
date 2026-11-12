@@ -1,0 +1,54 @@
+{
+ "name": "chg_f_list",
+ "paths": [
+  "/products?category=3&limit=20",
+  "/products?limit=20&page=3"
+ ],
+ "as": "customer",
+ "rounds": 3,
+ "block": 40,
+ "ports": {
+  "A": 8020,
+  "B": 8000
+ },
+ "variants": {
+  "A": {
+   "p50_ms": 34.14,
+   "p95_ms": 75.5,
+   "mean_ms": 34.65,
+   "n": 240,
+   "round_p50_ms": [
+    35.96,
+    28.7,
+    39.29
+   ],
+   "selects_per_request": [
+    5,
+    5
+   ],
+   "x_cache": null,
+   "x_db_query_count": null
+  },
+  "B": {
+   "p50_ms": 15.97,
+   "p95_ms": 25.93,
+   "mean_ms": 16.53,
+   "n": 240,
+   "round_p50_ms": [
+    14.71,
+    16.82,
+    16.35
+   ],
+   "selects_per_request": [
+    5,
+    5
+   ],
+   "x_cache": null,
+   "x_db_query_count": null
+  }
+ },
+ "p50_diff_ms_A_minus_B": 18.17,
+ "round_spread_ms": 10.59,
+ "ratio_A_over_B": 2.138,
+ "verdict": "B faster"
+}
