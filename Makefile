@@ -14,4 +14,11 @@ demo-quick:    ## short demo (about 3 min)
 demo-saved:    ## print the saved results without running anything live
 	$(PY) scripts/demo_req3.py --from-results
 
-.PHONY: phase1 phase2 bench-final demo demo-quick demo-saved
+req4-test:     ## Requirement 4 integration tests (stack must be running)
+	docker compose --profile test --profile req4 run --rm --no-deps tester tests -m "req4 or req4_latency" -v -s
+req4-demo:     ## Requirement 4 evidence/preflight demo
+	$(PY) scripts/demo_req4.py
+req4-demo-quick:
+	$(PY) scripts/demo_req4.py --quick
+
+.PHONY: phase1 phase2 bench-final demo demo-quick demo-saved req4-test req4-demo req4-demo-quick

@@ -108,3 +108,6 @@ python scripts/bench_final.py           # full interleaved V0..V4 benchmark (abo
 ```
 Feature flags (env): `USE_READ_REPLICA`, `CACHE_ENABLED`, `ETAG_ENABLED`, `GZIP_ENABLED`, `RYW_WINDOW_SECONDS`, TTLs `CACHE_LIST_TTL_SECONDS` / `CACHE_DETAIL_TTL_SECONDS`.
 The earlier dev stack (project `trendova-`) is untouched: `docker compose -p trendova- up -d` restores it.
+# Requirement 4 (queues and real-time)
+
+The default `EMAIL_DELIVERY_MODE=queue` writes an email event to the transactional outbox and returns the order response without waiting for SMTP. `inline` is only a benchmark variant. Start RabbitMQ, Soketi and the worker with `docker compose up -d --build`; use `docker compose --profile test up -d --build` only when Mailpit-based automated tests are needed. Queue counters: `python scripts/queue_status.py`. Add SMTP credentials only to the ignored `.env`, never to this repository.
