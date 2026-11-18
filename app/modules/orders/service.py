@@ -8,9 +8,12 @@ from app.core.schemas import paginate
 from app.integrations.inventory import gateway as inventory_gateway
 from app.integrations.inventory.gateway import InventoryUnavailableError
 from app.core import redis as rds
+from app.core.config import settings
 from app.modules.orders import repository as repo
 from app.modules.products import service as products
 from app.modules.notifications import service as notifications
+from app.modules.users import service as users
+from app.core import queue, realtime
 
 log=logging.getLogger(__name__)
 def has_orders(db,user_id):return repo.has_orders(db,user_id)
@@ -50,7 +53,11 @@ def create(db,user_id,data):
         raise AppError(409,'INSUFFICIENT_STOCK','Insufficient stock',details)
     lines=[{'product_id':id,'name':found[id]['name'],'price':found[id]['price'],'quantity':q,'subtotal':found[id]['price']*q} for id,q in merged.items()]
     total=sum((x['subtotal'] for x in lines),Decimal('0'))
-    try:order=repo.create(db,user_id,reservation_id,total,lines)
+    try:
+        order=repo.create(db,user_id,reservation_id,total,lines)
+        payload=_email_payload(db, order, 'created')
+        queue.enqueue_in_transaction(db, 'order_created', payload)
+        db.commit();db.refresh(order)
     except Exception:
         db.rollback()
         for attempt in range(3):
@@ -61,7 +68,12 @@ def create(db,user_id,data):
         raise AppError(500,'ORDER_CREATE_FAILED','Order could not be saved; inventory reservation release attempted')
     rds.mark_written(user_id)   # read-your-writes: this user's next reads go to the primary
     notifications.safe_notify(db,user_id,'Order created',f'Your order #{order.id} was created')
-    return serialize(order)
+    result=serialize(order)
+    if settings.email_delivery_mode=='inline':
+        from app.worker import send_email
+        send_email(payload)
+    realtime.publish('private-admin-orders','order.created',result)
+    return result
 def list_orders(db,user_id,page,limit,status=None,filter_user_id=None):
     rows,total=repo.list_orders(db,user_id,page,limit,status,filter_user_id)
     return paginate([serialize(o) for o in rows],total,page,limit)
@@ -79,7 +91,18 @@ def change_status(db,id,status,actor_id=None):
     if status=='cancelled':
         try:inventory_gateway.gateway.release(order.reservation_id)
         except Exception:db.rollback();raise AppError(503,'INVENTORY_UNAVAILABLE','Could not release inventory')
+    payload=_email_payload(db, order, status)
+    queue.enqueue_in_transaction(db, 'order_status_changed', payload)
     db.commit();db.refresh(order)
     rds.mark_written(order.user_id);rds.mark_written(actor_id)   # the owner and the admin must both read their own write
     notifications.safe_notify(db,order.user_id,'Order updated',f'Order #{order.id} is {status}')
-    return serialize(order)
+    result=serialize(order)
+    if settings.email_delivery_mode=='inline':
+        from app.worker import send_email
+        send_email(payload)
+    realtime.publish(f'private-order.{order.id}','order.status_changed',result)
+    return result
+
+def _email_payload(db, order, kind):
+    recipient=users.get_by_id(db,order.user_id)
+    return {'kind':kind,'recipient':recipient.email,'order':serialize(order),'attempt':0}

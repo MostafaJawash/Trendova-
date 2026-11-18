@@ -10,6 +10,22 @@ x-app-env: &app-env
   INVENTORY_GRPC_ADDR: inventory-service:50051
   INVENTORY_MODE: grpc
   DB_QUERY_COUNT: ${DB_QUERY_COUNT:-0}
+  RABBITMQ_URL: amqp://trendova:${RABBITMQ_PASSWORD:-trendova-local-password}@rabbitmq:5672/%2F
+  RABBITMQ_MANAGEMENT_URL: http://rabbitmq:15672
+  RABBITMQ_USER: trendova
+  RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-trendova-local-password}
+  EMAIL_DELIVERY_MODE: ${EMAIL_DELIVERY_MODE:-queue}
+  SMTP_HOST: ${SMTP_HOST:-mailpit}
+  SMTP_PORT: ${SMTP_PORT:-1025}
+  SMTP_USER: ${SMTP_USER:-}
+  SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+  SMTP_FROM: ${SMTP_FROM:-noreply@trendova.local}
+  SMTP_STARTTLS: ${SMTP_STARTTLS:-false}
+  PUSHER_APP_ID: ${PUSHER_APP_ID:-trendova}
+  PUSHER_KEY: ${PUSHER_KEY:-trendova-key}
+  PUSHER_SECRET: ${PUSHER_SECRET:-trendova-secret}
+  PUSHER_HOST: soketi
+  PUSHER_PORT: 6001
 
 x-app: &app-base
   build:
@@ -58,6 +74,62 @@ services:
       ETAG_ENABLED: ${ETAG_ENABLED:-true}
     ports: ["8000:8000"]
     volumes: ["uploads:/app/uploads"]
+  app-inline:
+    <<: *app-base
+    profiles: ["req4"]
+    environment:
+      <<: *app-env
+      USE_READ_REPLICA: ${USE_READ_REPLICA:-true}
+      CACHE_ENABLED: ${CACHE_ENABLED:-true}
+      ETAG_ENABLED: ${ETAG_ENABLED:-true}
+      EMAIL_DELIVERY_MODE: inline
+    ports: ["8001:8000"]
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    # Docker Desktop created the named volume as root; run the official entrypoint as root so it can initialize its cookie.
+    user: "0:0"
+    environment:
+      RABBITMQ_DEFAULT_USER: trendova
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-trendova-local-password}
+    ports: ["5672:5672", "15672:15672"]
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  worker:
+    <<: *app-base
+    command: ["python", "-m", "app.worker"]
+    environment:
+      <<: *app-env
+      USE_READ_REPLICA: ${USE_READ_REPLICA:-true}
+      CACHE_ENABLED: ${CACHE_ENABLED:-true}
+      ETAG_ENABLED: ${ETAG_ENABLED:-true}
+    depends_on:
+      app:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      # python:slim does not include pgrep; PID 1 is the worker process.
+      test: ["CMD", "python", "-c", "import os; os.kill(1, 0)"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+  soketi:
+    image: quay.io/soketi/soketi:1.6-16-alpine
+    environment:
+      SOKETI_DEFAULT_APP_ID: ${PUSHER_APP_ID:-trendova}
+      SOKETI_DEFAULT_APP_KEY: ${PUSHER_KEY:-trendova-key}
+      SOKETI_DEFAULT_APP_SECRET: ${PUSHER_SECRET:-trendova-secret}
+      SOKETI_DEFAULT_APP_ENABLE_CLIENT_MESSAGES: "false"
+    ports: ["6001:6001"]
+  mailpit:
+    image: axllent/mailpit:v1.22
+    profiles: ["test"]
+    ports: ["1025:1025", "8025:8025"]
   db-replica:
     image: mysql:8.0   # SAME tag as the primary
     env_file: .env
@@ -210,3 +282,4 @@ volumes:
   mysql_data:
   mysql_replica_data:
   inventory_pg_data:
+  rabbitmq_data:

@@ -33,6 +33,16 @@ class Settings(BaseSettings):
     diag_allow_stock_mode: bool = False        # diagnostics instance only: lets ?stock_mode=naive|batch override stock_mode
     gzip_enabled: bool = True                  # GZipMiddleware (Accept-Encoding: gzip); ETag stays the hash of the UNcompressed body
     stock_mode: str = 'batch'                  # 'batch' (one GetStockBatch call) | 'naive' (N calls; benchmark/test variant only)             # max product ids per GetStockBatch call
+    # ---- Req 4: asynchronous email and Pusher-compatible real-time events ----
+    rabbitmq_url: str = 'amqp://guest:guest@rabbitmq:5672/%2F'
+    rabbitmq_management_url: str = 'http://rabbitmq:15672'
+    rabbitmq_user: str = 'guest'; rabbitmq_password: str = 'guest'
+    email_delivery_mode: str = 'queue'          # queue is production; inline exists only for latency tests
+    smtp_host: str = 'mailpit'; smtp_port: int = 1025
+    smtp_user: str = ''; smtp_password: str = ''; smtp_from: str = 'noreply@trendova.local'
+    smtp_starttls: bool = False; smtp_timeout_seconds: float = 10.0
+    pusher_app_id: str = 'trendova'; pusher_key: str = 'trendova-key'; pusher_secret: str = 'trendova-secret'
+    pusher_host: str = 'soketi'; pusher_port: int = 6001; pusher_scheme: str = 'http'
     @property
     def replica_url(self):
         if self.database_replica_url: return self.database_replica_url

@@ -19,6 +19,7 @@ from app.modules.products import router as products_router
 from app.modules.orders import router as orders_router
 from app.modules.notifications import router as notifications_router
 from app.modules.dashboard import router as dashboard_router
+from app.modules.broadcasting import router as broadcasting_router
 from app.integrations.inventory.gateway import configure_gateway, close_gateway
 
 log=logging.getLogger(__name__)
@@ -35,6 +36,13 @@ async def purge_revoked_tokens_loop():
             if removed:log.info('Purged %s expired revoked tokens',removed)
         except Exception:log.exception('Revoked token purge failed')
 
+async def outbox_loop():
+    from app.core.queue import dispatch_outbox
+    while True:
+        try:await asyncio.to_thread(dispatch_outbox)
+        except Exception:log.exception('Outbox dispatcher failed')
+        await asyncio.sleep(1)
+
 @asynccontextmanager
 async def lifespan(app:FastAPI):
     configure_gateway()
@@ -48,8 +56,10 @@ async def lifespan(app:FastAPI):
             time.sleep(2)
     with SessionLocal() as db: users_service.seed_admin(db)
     purge_task=asyncio.create_task(purge_revoked_tokens_loop())
+    outbox_task=asyncio.create_task(outbox_loop())
     yield
     purge_task.cancel()
+    outbox_task.cancel()
     close_gateway()
 
 app=FastAPI(title='Trendova API v1',version='v1',lifespan=lifespan,openapi_tags=[{'name':name} for name in ('health','auth','users','categories','products','favorites','orders','notifications','dashboard')])
@@ -102,7 +112,7 @@ def cache_stats_reset(_=Depends(_admin_dep)):
     _cache.reset_stats();return Response(status_code=204)
 
 prefix='/api/v1'
-for router in (users_router.auth_router,users_router.router,products_router.categories_router,products_router.router,products_router.favorites_router,orders_router.router,notifications_router.router,dashboard_router.router):
+for router in (users_router.auth_router,users_router.router,products_router.categories_router,products_router.router,products_router.favorites_router,orders_router.router,notifications_router.router,dashboard_router.router,broadcasting_router):
     app.include_router(router,prefix=prefix)
 Path(settings.upload_dir).mkdir(parents=True,exist_ok=True)
 app.mount('/media',StaticFiles(directory=settings.upload_dir),name='media')

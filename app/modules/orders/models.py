@@ -1,7 +1,7 @@
 """
 Order Model for E-Commerce application.
 """
-from sqlalchemy import Column, Integer, String, Numeric, DateTime, ForeignKey, Index, CheckConstraint, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Numeric, DateTime, ForeignKey, Index, CheckConstraint, UniqueConstraint, Text, Boolean
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from app.core.database import Base, IdType
@@ -89,3 +89,21 @@ class OrderItem(Base):
     order = relationship('Order', back_populates='order_items')
     product = relationship('Product', back_populates='order_items')
     __table_args__ = (UniqueConstraint('order_id', 'product_id', name='uq_order_items_order_product'), Index('idx_order_items_product_id', 'product_id'), CheckConstraint('quantity > 0', name='ck_order_items_quantity'), CheckConstraint('unit_price >= 0', name='ck_order_items_unit_price'), CheckConstraint('subtotal >= 0', name='ck_order_items_subtotal'))
+
+class OutboxEvent(Base):
+    __tablename__ = 'outbox'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    event_type = Column(String(80), nullable=False)
+    payload = Column(Text, nullable=False)
+    published_at = Column(DateTime, nullable=True)
+    attempts = Column(Integer, nullable=False, default=0)
+    created_at = Column(DateTime, nullable=False, server_default=func.current_timestamp())
+    __table_args__ = (Index('idx_outbox_pending', 'published_at', 'id'),)
+
+class SentEmail(Base):
+    __tablename__ = 'sent_emails'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    order_id = Column(IdType, ForeignKey('orders.id', ondelete='RESTRICT'), nullable=False)
+    kind = Column(String(80), nullable=False)
+    created_at = Column(DateTime, nullable=False, server_default=func.current_timestamp())
+    __table_args__ = (UniqueConstraint('order_id', 'kind', name='uq_sent_emails_order_kind'),)

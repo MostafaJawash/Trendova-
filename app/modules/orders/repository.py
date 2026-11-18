@@ -7,7 +7,6 @@ def create(db,user_id,reservation_id,total,lines):
     db.add(order);db.flush()
     for line in lines:
         db.add(OrderItem(order_id=order.id,product_id=line['product_id'],product_name=line['name'],quantity=line['quantity'],unit_price=line['price'],subtotal=line['subtotal']))
-    db.commit();db.refresh(order)
     return get(db,order.id)
 def get(db,id):return db.query(Order).options(joinedload(Order.order_items)).filter_by(id=id).first()
 def list_orders(db,user_id,page,limit,status=None,filter_user_id=None):
