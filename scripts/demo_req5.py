@@ -11,12 +11,16 @@ RESULT = Path('docs/req5/results/load_500.json')
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--quick', action='store_true')
+    parser.add_argument('--pause', action='store_true')
+    parser.add_argument('--step', type=int)
     parser.add_argument('--from-results', action='store_true')
     parser.add_argument('--no-color', action='store_true')
     parser.add_argument('--step', type=int)
     args = parser.parse_args()
     started = time.monotonic()
     print('REQ5 DEMO: nginx topology and distribution')
+    if args.pause:
+        input('Press Enter to run the selected measurement...')
     if args.from_results:
         if RESULT.exists(): print('SAVED RESULTS\n' + RESULT.read_text(encoding='utf-8'))
         else: print('SAVED RESULTS: NOT MEASURED')

@@ -60,7 +60,7 @@ docker compose --profile test run --rm --no-deps tester tests/req5/test_before_a
 
 ## F. العرض
 
-`python scripts/demo_req5.py --pause` يعرض كل خطوة؛ `--quick` يقلل الطلبات؛ `--step N` غير موجود حالياً في السكربت؛ `--from-results` يطبع ملفات النتائج المحفوظة. قل: «كل نسخة عديمة الحالة، وnginx يوزع الطلبات».
+`python scripts/demo_req5.py --pause` يطلب Enter قبل القياس؛ `--quick` يقلل الطلبات؛ `--step N` يقبل رقم الخطوة (والسكربت الحالي ينفذ قياس التوزيع نفسه)؛ `--from-results` يطبع ملفات النتائج المحفوظة. قل: «كل نسخة عديمة الحالة، وnginx يوزع الطلبات».
 
 ## G. الإيقاف والمشاكل الشائعة
 
