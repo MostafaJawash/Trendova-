@@ -6,8 +6,8 @@
 
 1. شغّل Docker Desktop ثم افتح PowerShell داخل المشروع `Trendova-`.
 2. أنشئ `.env` من `.env.example` واضبط `DATABASE_PASSWORD` و`SECRET_KEY` وبيانات SMTP. للتجربة المحلية يوفّر profile `test` خدمة Mailpit على 1025/8025.
-3. نفّذ `make req5-up` أو `docker compose --profile test up -d --build --scale app=3 --scale worker=3`.
-4. نفّذ `docker compose ps` ثم `curl.exe -i http://localhost:8000/health`.
+3. نفّذ `docker compose -p trendova-req3 --profile req4 --profile test up -d --build --scale app=3 --scale worker=3`.
+4. نفّذ `docker compose -p trendova-req3 --profile req4 --profile test ps` ثم `curl.exe -i http://localhost:8000/health`.
 
 نتيجة متوقعة (لم تُقَس أثناء كتابة هذا الدليل): nginx واحد وثلاث `app` وثلاث `worker`، ورأسا `X-Instance` و`X-Upstream-Addr`.
 
@@ -38,14 +38,16 @@ docker compose up -d --scale app=3
 
 ## D. عدد مختلف من النسخ
 
-ابدأ بنسختين: `docker compose up -d --scale app=2 --scale worker=2`. للعودة: `docker compose up -d --scale app=3 --scale worker=3`.
+ابدأ بنسختين: `docker compose -p trendova-req3 --profile req4 --profile test up -d --scale app=2 --scale worker=2`. للعودة: `docker compose -p trendova-req3 --profile req4 --profile test up -d --scale app=3 --scale worker=3`.
 
 ## E. الاختبارات و BEFORE/AFTER
 
 ```powershell
-docker compose --profile test run --rm --no-deps tester tests/req5/test_distribution.py -m req5 -s
-docker compose --profile test run --rm --no-deps tester tests/req5/test_before_after.py -m req5 -s
-docker compose --profile test run --rm --no-deps tester tests/req5/test_before_after.py::test_light_failover_evidence -m req5 -s
+docker compose -p trendova-req3 --profile req4 --profile test run --rm --no-deps tester tests/req5/test_distribution.py -m req5 -s
+docker compose -p trendova-req3 --profile req4 --profile test run --rm --no-deps tester tests/req5/test_before_after.py -m req5 -s
+python scripts/req5_before_after.py
+python scripts/req5_before_after.py --problem 1 --skip-failover
+python scripts/req5_before_after.py --list
 ```
 
 | المشكلة | toggle | BEFORE | AFTER |
@@ -56,7 +58,7 @@ docker compose --profile test run --rm --no-deps tester tests/req5/test_before_a
 | login | `REDIS_LOGIN_LIMITER` | `false` | `true` |
 | email | `WORKER_IDEMPOTENCY` | `false` | `true` |
 
-الملف `test_before_after.py` يعيد النسخ إلى قيمة `true` في `finally` ولا يستخدم `down -v`.
+السكربت المضيف `scripts/req5_before_after.py` هو الذي يبدّل toggles ويعيد كل القيم إلى `true` في `finally` ولا يستخدم `down -v`. ملف pytest يتحقق فقط من توزيع 50 طلباً من داخل tester عبر `http://nginx`.
 
 ## F. العرض
 
@@ -64,7 +66,7 @@ docker compose --profile test run --rm --no-deps tester tests/req5/test_before_a
 
 ## G. الإيقاف والمشاكل الشائعة
 
-أوقف بأمان عبر `docker compose down` فقط. لا تستخدم `docker compose down -v` لأنه يحذف volumes وبيانات dataset. إذا كان 8000 مستخدماً أوقف العملية الأخرى؛ إذا لم تصبح النسخ healthy انتظر healthcheck أو زِد ذاكرة Docker Desktop. قد يحجب VPN منفذ SMTP 587؛ اضبط مزود SMTP مناسباً (465/SSL يتطلب دعماً وإعدادات SMTP إضافية غير موجودة حالياً في هذا المشروع).
+أوقف بأمان عبر `docker compose -p trendova-req3 --profile req4 --profile test down` فقط. لا تستخدم `docker compose down -v` لأنه يحذف volumes وبيانات dataset. إذا كان 8000 مستخدماً أوقف العملية الأخرى؛ إذا لم تصبح النسخ healthy انتظر healthcheck أو زِد ذاكرة Docker Desktop. قد يحجب VPN منفذ SMTP 587؛ استخدم 465 مع `SMTP_SSL=true` عند الحاجة؛ هذا مدعوم في Requirement 4.
 
 ## H. إجابات الشرائح 4-10
 
