@@ -27,6 +27,9 @@ ENV/
 
 # Logs
 *.log
+uploads/
+loadtest/results/
+docs/req5/results/
 
 # Generated from proto/inventory.proto during builds
 app/integrations/inventory/generated/

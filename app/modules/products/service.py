@@ -79,7 +79,7 @@ def save_image(image):
         if format_ not in ('jpeg','png','webp'):raise ValueError()
     except Exception:raise AppError(422,'INVALID_IMAGE','Image must be a valid JPEG, PNG, or WebP')
     filename=f'{uuid4()}.{ "jpg" if format_=="jpeg" else format_ }'
-    Path(settings.upload_dir,filename).write_bytes(raw)
+    Path(settings.effective_upload_dir,filename).write_bytes(raw)
     return '/media/'+filename
 def create_product(db,data,image,quantity,actor_id=None):
     if data['price']<=0 or quantity<0:raise AppError(422,'VALIDATION_ERROR','Invalid price or quantity')
@@ -87,12 +87,12 @@ def create_product(db,data,image,quantity,actor_id=None):
     url=save_image(image);data['image_url']=url;data['is_active']=True
     try:p=repo.create_product(db,data)
     except Exception:
-        if url:Path(settings.upload_dir,url.split('/')[-1]).unlink(missing_ok=True)
+        if url:Path(settings.effective_upload_dir,url.split('/')[-1]).unlink(missing_ok=True)
         raise
     try:inventory_gateway.gateway.set_stock(p.id,quantity)
     except Exception:
         repo.delete_product(db,p)
-        if url:Path(settings.upload_dir,url.split('/')[-1]).unlink(missing_ok=True)
+        if url:Path(settings.effective_upload_dir,url.split('/')[-1]).unlink(missing_ok=True)
         _products_changed(p.id,actor_id);raise AppError(503,'INVENTORY_UNAVAILABLE','Could not initialize inventory')
     _products_changed(p.id,actor_id);return summary(p)
 def update_product(db,id,data,image,actor_id=None):
@@ -104,7 +104,7 @@ def update_product(db,id,data,image,actor_id=None):
     for k,v in data.items():setattr(p,k,v)
     if image:p.image_url=save_image(image)
     db.commit();db.refresh(p)
-    if image and old:Path(settings.upload_dir,old.split('/')[-1]).unlink(missing_ok=True)
+    if image and old:Path(settings.effective_upload_dir,old.split('/')[-1]).unlink(missing_ok=True)
     _products_changed(id,actor_id);return summary(p)
 def set_stock(db,id,quantity):
     if repo.get_product(db,id) is None:raise AppError(404,'NOT_FOUND','Product not found')

@@ -3,6 +3,7 @@ import json
 import logging
 import smtplib
 import time
+import socket
 from email.message import EmailMessage
 import pika
 from sqlalchemy.exc import IntegrityError
@@ -14,6 +15,7 @@ from app.modules.orders.models import SentEmail
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
 log = logging.getLogger(__name__)
+WORKER_HOSTNAME = socket.gethostname()
 
 def send_email(payload):
     message = EmailMessage(); message['From'] = settings.smtp_from; message['To'] = payload['recipient']; message['Subject'] = f"Order #{payload['order']['id']} {payload['kind']}"
@@ -25,6 +27,8 @@ def send_email(payload):
         smtp.send_message(message)
 
 def already_sent(payload):
+    if not settings.worker_idempotency:
+        return False
     db = SessionLocal()
     try:
         marker = SentEmail(order_id=payload['order']['id'], kind=payload['kind']); db.add(marker); db.commit(); return False
@@ -35,12 +39,13 @@ def already_sent(payload):
 def callback(channel, method, properties, body):
     payload = json.loads(body)
     if already_sent(payload):
-        log.info('Duplicate email ignored order=%s kind=%s', payload['order']['id'], payload['kind']); channel.basic_ack(method.delivery_tag); return
+        log.info('Duplicate email ignored worker=%s order=%s kind=%s', WORKER_HOSTNAME, payload['order']['id'], payload['kind']); channel.basic_ack(method.delivery_tag); return
     try:
-        send_email(payload); log.info('Email sent order=%s kind=%s', payload['order']['id'], payload['kind']); channel.basic_ack(method.delivery_tag)
+        send_email(payload); log.info('Email sent worker=%s order=%s kind=%s', WORKER_HOSTNAME, payload['order']['id'], payload['kind']); channel.basic_ack(method.delivery_tag)
     except Exception:
         # Marker is removed so another delivery may make the actual send attempt.
-        db = SessionLocal(); db.query(SentEmail).filter_by(order_id=payload['order']['id'], kind=payload['kind']).delete(); db.commit(); db.close()
+        if settings.worker_idempotency:
+            db = SessionLocal(); db.query(SentEmail).filter_by(order_id=payload['order']['id'], kind=payload['kind']).delete(); db.commit(); db.close()
         attempt = int(payload.get('attempt', 0)) + 1
         if attempt >= 3:
             channel.basic_publish(DLX, 'dead', body, properties=pika.BasicProperties(delivery_mode=2)); log.exception('Email moved to DLQ')
@@ -53,7 +58,7 @@ def main():
     while True:
         try:
             connection = pika.BlockingConnection(pika.URLParameters(settings.rabbitmq_url)); channel = connection.channel(); declare(channel); channel.basic_qos(prefetch_count=1); channel.basic_consume(QUEUE, callback, auto_ack=False)
-            log.info('Email worker consuming %s', QUEUE); channel.start_consuming()
+            log.info('Email worker consuming worker=%s queue=%s', WORKER_HOSTNAME, QUEUE); channel.start_consuming()
         except Exception:
             log.exception('RabbitMQ connection/consumer failed; retrying in 2 seconds')
             time.sleep(2)

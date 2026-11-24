@@ -111,3 +111,7 @@ The earlier dev stack (project `trendova-`) is untouched: `docker compose -p tre
 # Requirement 4 (queues and real-time)
 
 The default `EMAIL_DELIVERY_MODE=queue` writes an email event to the transactional outbox and returns the order response without waiting for SMTP. `inline` is only a benchmark variant. Start RabbitMQ, Soketi and the worker with `docker compose up -d --build`; use `docker compose --profile test up -d --build` only when Mailpit-based automated tests are needed. Queue counters: `python scripts/queue_status.py`. Add SMTP credentials only to the ignored `.env`, never to this repository.
+
+## Requirement 5 - scaling
+
+Nginx is the only public API entry at `http://localhost:8000`; application containers do not publish host ports. Start three API and email-worker replicas with `docker compose --profile test up -d --build --scale app=3 --scale worker=3`. The Req 4 `app-inline` profile remains on port 8001. Inspect routing with `curl -i http://localhost:8000/health` (`X-Instance` and `X-Upstream-Addr`) and run `python scripts/load_500.py` for the 500-request evidence. Stop one replica with `docker stop trendova-req3-app-1`, then restore it with `docker start trendova-req3-app-1`. `make req5-down` preserves volumes.
