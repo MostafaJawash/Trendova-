@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import time
+import socket
 from contextlib import asynccontextmanager
 from pathlib import Path
 from fastapi import Depends, FastAPI, Request, Response
@@ -10,6 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException
 from app.core.config import settings
 from app.core.database import SessionLocal
+from sqlalchemy import text
 from app.core.errors import AppError
 from app.core.migrations import migrate
 from app.core.tokens import purge_expired
@@ -46,15 +48,26 @@ async def outbox_loop():
 @asynccontextmanager
 async def lifespan(app:FastAPI):
     configure_gateway()
+    # MySQL advisory locking makes additive migrations and seed creation safe
+    # when Compose starts three replicas at exactly the same time.
     for attempt in range(20):
         try:
-            migrate()
+            with SessionLocal() as db:
+                mysql_lock = db.bind.dialect.name == 'mysql'
+                if mysql_lock and settings.startup_lock_enabled:
+                    if db.execute(text("SELECT GET_LOCK('trendova_startup', 30)")).scalar() != 1:
+                        raise RuntimeError('could not acquire startup lock')
+                try:
+                    migrate()
+                    users_service.seed_admin(db)
+                finally:
+                    if mysql_lock and settings.startup_lock_enabled:
+                        db.execute(text("SELECT RELEASE_LOCK('trendova_startup')"))
             break
         except Exception:
             if attempt==19:raise
             log.warning('Database not ready; retrying startup (%s/20)',attempt+1)
             time.sleep(2)
-    with SessionLocal() as db: users_service.seed_admin(db)
     purge_task=asyncio.create_task(purge_revoked_tokens_loop())
     outbox_task=asyncio.create_task(outbox_loop())
     yield
@@ -64,6 +77,11 @@ async def lifespan(app:FastAPI):
 
 app=FastAPI(title='Trendova API v1',version='v1',lifespan=lifespan,openapi_tags=[{'name':name} for name in ('health','auth','users','categories','products','favorites','orders','notifications','dashboard')])
 app.middleware('http')(security_headers)
+@app.middleware('http')
+async def instance_header(request: Request, call_next):
+    response = await call_next(request)
+    response.headers['X-Instance'] = socket.gethostname()
+    return response
 if settings.gzip_enabled:
     from starlette.middleware.gzip import GZipMiddleware
     app.add_middleware(GZipMiddleware,minimum_size=1000)
@@ -114,5 +132,5 @@ def cache_stats_reset(_=Depends(_admin_dep)):
 prefix='/api/v1'
 for router in (users_router.auth_router,users_router.router,products_router.categories_router,products_router.router,products_router.favorites_router,orders_router.router,notifications_router.router,dashboard_router.router,broadcasting_router):
     app.include_router(router,prefix=prefix)
-Path(settings.upload_dir).mkdir(parents=True,exist_ok=True)
-app.mount('/media',StaticFiles(directory=settings.upload_dir),name='media')
+Path(settings.effective_upload_dir).mkdir(parents=True,exist_ok=True)
+app.mount('/media',StaticFiles(directory=settings.effective_upload_dir),name='media')

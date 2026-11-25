@@ -10,6 +10,11 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60
     admin_email: str = 'admin@example.com'; admin_password: str = Field(min_length=8); admin_full_name: str = 'Administrator'
     upload_dir: str = 'uploads'; max_upload_mb: int = 5; inventory_mode: str = 'fake'
+    uploads_shared: bool = True
+    outbox_single_publisher: bool = True
+    startup_lock_enabled: bool = True
+    redis_login_limiter: bool = True
+    worker_idempotency: bool = True
     inventory_grpc_addr: str = 'inventory-service:50051'
     inventory_timeout_seconds: float = 2.0
     db_query_count: bool = False  # DB_QUERY_COUNT=1 exposes X-DB-Query-Count (diagnostics only)
@@ -51,4 +56,7 @@ class Settings(BaseSettings):
         return None
     @property
     def sqlalchemy_url(self): return self.database_url or f'mysql+pymysql://{self.database_user}:{self.database_password}@{self.database_host}:{self.database_port}/{self.database_name}'
-settings = Settings(); Path(settings.upload_dir).mkdir(parents=True, exist_ok=True)
+    @property
+    def effective_upload_dir(self):
+        return self.upload_dir if self.uploads_shared else str(Path(self.upload_dir).parent / 'uploads-local')
+settings = Settings(); Path(settings.effective_upload_dir).mkdir(parents=True, exist_ok=True)

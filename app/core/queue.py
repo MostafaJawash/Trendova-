@@ -5,6 +5,7 @@ from datetime import datetime
 
 import pika
 from sqlalchemy import select
+from sqlalchemy import text
 
 from app.core.config import settings
 from app.core.database import SessionLocal
@@ -45,9 +46,19 @@ def enqueue_in_transaction(db, event_type: str, payload: dict):
     db.add(OutboxEvent(event_type=event_type, payload=json.dumps(payload, default=str)))
 
 def dispatch_outbox(limit=100):
-    """Best-effort publisher. Rows stay pending on any broker failure."""
+    """Best-effort publisher, serialized across API replicas with a DB lock.
+
+    A message is published by one elected loop at a time.  This deliberately
+    avoids a per-container publisher race; the durable outbox remains pending
+    if RabbitMQ is unavailable.
+    """
     db = SessionLocal()
     try:
+        mysql_lock = db.bind.dialect.name == 'mysql'
+        if mysql_lock and settings.outbox_single_publisher:
+            acquired = db.execute(text("SELECT GET_LOCK('trendova_outbox_dispatch', 0)")).scalar()
+            if acquired != 1:
+                return 0
         rows = db.scalars(select(OutboxEvent).where(OutboxEvent.published_at.is_(None)).order_by(OutboxEvent.id).limit(limit)).all()
         for row in rows:
             try:
@@ -62,4 +73,7 @@ def dispatch_outbox(limit=100):
                 break
         return len(rows)
     finally:
+        if db.bind.dialect.name == 'mysql' and settings.outbox_single_publisher:
+            try: db.execute(text("SELECT RELEASE_LOCK('trendova_outbox_dispatch')"))
+            except Exception: pass
         db.close()

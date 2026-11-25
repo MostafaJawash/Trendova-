@@ -26,6 +26,14 @@ x-app-env: &app-env
   PUSHER_SECRET: ${PUSHER_SECRET:-trendova-secret}
   PUSHER_HOST: soketi
   PUSHER_PORT: 6001
+  # Required when more than one API container runs: every mount points at the
+  # same named volume rather than a container-local /app/uploads directory.
+  UPLOAD_DIR: /app/uploads
+  UPLOADS_SHARED: ${UPLOADS_SHARED:-true}
+  OUTBOX_SINGLE_PUBLISHER: ${OUTBOX_SINGLE_PUBLISHER:-true}
+  STARTUP_LOCK_ENABLED: ${STARTUP_LOCK_ENABLED:-true}
+  REDIS_LOGIN_LIMITER: ${REDIS_LOGIN_LIMITER:-true}
+  WORKER_IDEMPOTENCY: ${WORKER_IDEMPOTENCY:-true}
 
 x-app: &app-base
   build:
@@ -72,8 +80,21 @@ services:
       USE_READ_REPLICA: ${USE_READ_REPLICA:-true}
       CACHE_ENABLED: ${CACHE_ENABLED:-true}
       ETAG_ENABLED: ${ETAG_ENABLED:-true}
-    ports: ["8000:8000"]
     volumes: ["uploads:/app/uploads"]
+  nginx:
+    image: nginx:1.27-alpine
+    depends_on:
+      app:
+        condition: service_healthy
+    ports: ["8000:80"]
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O- http://127.0.0.1/nginx-health >/dev/null"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
   app-inline:
     <<: *app-base
     profiles: ["req4"]
@@ -96,9 +117,10 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
+      interval: 20s
+      timeout: 30s
+      retries: 10
+      start_period: 240s
   worker:
     <<: *app-base
     command: ["python", "-m", "app.worker"]
@@ -245,7 +267,7 @@ services:
     user: root
     env_file: .env
     environment:
-      E2E_BASE_URL: http://app:8000/api/v1
+      E2E_BASE_URL: http://nginx/api/v1
       E2E_V1_URL: http://app-v1:8000/api/v1
       E2E_ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@example.com}
       E2E_ADMIN_PASSWORD: ${ADMIN_PASSWORD:-ChangeMe123!}
@@ -268,7 +290,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      BASE_URL: http://app:8000/api/v1
+      BASE_URL: http://nginx/api/v1
       ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@example.com}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-ChangeMe123!}
       K6_NO_USAGE_REPORT: "true"

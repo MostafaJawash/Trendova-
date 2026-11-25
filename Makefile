@@ -21,4 +21,15 @@ req4-demo:     ## Requirement 4 evidence/preflight demo
 req4-demo-quick:
 	$(PY) scripts/demo_req4.py --quick
 
-.PHONY: phase1 phase2 bench-final demo demo-quick demo-saved req4-test req4-demo req4-demo-quick
+req5-up:
+	docker compose --profile test up -d --build --scale app=3 --scale worker=3
+req5-test:
+	docker compose --profile test run --rm --no-deps tester tests/req5 -m req5 -v -s
+req5-demo:
+	$(PY) scripts/demo_req5.py
+req5-demo-quick:
+	$(PY) scripts/demo_req5.py --quick
+req5-down:
+	docker compose down
+
+.PHONY: phase1 phase2 bench-final demo demo-quick demo-saved req4-test req4-demo req4-demo-quick req5-up req5-test req5-demo req5-demo-quick req5-down

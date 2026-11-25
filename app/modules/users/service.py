@@ -3,7 +3,7 @@ from app.core.errors import AppError
 from app.core.security import hash_password, verify_password, create_access_token
 from app.core.tokens import revoke
 from app.core.config import settings
-from app.core.rate_limiter import limiter
+from app.core.rate_limiter import shared_limiter
 from app.modules.users import repository
 
 def get_by_id(db, user_id): return repository.get(db, user_id)
@@ -17,13 +17,13 @@ def register(db, data):
     except IntegrityError: db.rollback(); raise AppError(409, 'EMAIL_EXISTS', 'Email already registered')
 def login(db, data, ip):
     key = (ip, data.email.lower())
-    retry = limiter.retry_after(key)
+    retry = shared_limiter.retry_after(key)
     if retry: raise AppError(429, 'TOO_MANY_ATTEMPTS', 'Too many failed attempts', headers={'Retry-After': str(retry)})
     user = repository.by_email(db, data.email)
     if user is None or not user.is_active or not verify_password(data.password, user.password_hash):
-        limiter.failed(key)
+        shared_limiter.failed(key)
         raise AppError(401, 'UNAUTHORIZED', 'Invalid email or password')
-    limiter.clear(key)
+    shared_limiter.clear(key)
     return {'access_token': create_access_token(user.id, user.role), 'token_type': 'bearer', 'expires_in': settings.access_token_expire_minutes*60, 'user': user}
 def update_me(db, user, claims, data):
     if data.email and data.email.lower() != user.email.lower() and repository.by_email(db, data.email):
